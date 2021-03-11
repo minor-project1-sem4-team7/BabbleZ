@@ -64,3 +64,12 @@ class Security:
         # get database keys or generate keys
         generate_keys(self.password)
         # get local keys function REMAINING
+
+
+        '''
+            REMAINING :
+                - SQL sync
+                - First time cryptography
+                - Key pickup form DB
+                - password pickup
+        '''
