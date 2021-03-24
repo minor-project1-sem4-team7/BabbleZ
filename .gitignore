@@ -136,3 +136,16 @@ gitmanage*
 git*
 git*.*
 temp_folder/
+/.idea/.gitignore
+/BackEnd/.idea/.gitignore
+/.idea/BabbleZ.iml
+/BackEnd/.idea/BackEnd.iml
+/BackEnd/clientside/logfile.txt
+/.idea/misc.xml
+/BackEnd/.idea/misc.xml
+/.idea/modules.xml
+/BackEnd/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/BackEnd/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+/BackEnd/.idea/vcs.xml
