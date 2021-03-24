@@ -13,6 +13,7 @@ class Security:
         self._private_key = None
         self.sender_key = None
         self._app_key = None
+        self.key_status = False
         self.password = 'Hello_wwrsfaffasfrrssvg h7'            # test password variable REMAINING
 
         self.fetch_keys()
@@ -20,17 +21,17 @@ class Security:
     def private_encrypt(self, plain_text: str):
         return rsa.encrypt(plain_text.encode(), self._private_key)
 
+    def private_decrypt(self, crypt_text):
+        return rsa.decrypt(crypt_text, self._private_key).decode()
+
     def app_encrypt(self, data):
         data = data.encode()
         func = Fernet(self._app_key)
         encrypted_data = func.encrypt(data)
-        return encrypted_data.decode()
-
-    def private_decrypt(self, crypt_text: str):
-        return rsa.decrypt(crypt_text, self._private_key).decode()
+        return encrypted_data
 
     def app_decrypt(self, data):
-        data = data.encode()
+        data = data
         func = Fernet(self._app_key)
         decrypted_data = func.decrypt(data)
         return decrypted_data.decode()
