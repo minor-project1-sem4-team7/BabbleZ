@@ -65,7 +65,7 @@ class Babble:
 
     def status_report(self, userid):
 
-        packet = '{} {}'.format(userid, datetime.now())
+        packet = '{} {}'.format(userid, datetime.now()).encode()
         while True:
             self.socket.send(packet)
 
