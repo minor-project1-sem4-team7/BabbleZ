@@ -140,7 +140,7 @@ footer{
   #show2:checked ~ .cont2{
     display:inline;
   }
-  
+
 
 
   .cont .close-btn{
@@ -191,7 +191,13 @@ footer{
     margin: 40px 0;
   }
 
-
+  canvas {
+  
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgb(0, 0, 0);
+  }
 
 
 
