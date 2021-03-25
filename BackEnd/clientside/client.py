@@ -1,7 +1,8 @@
 import threading
 import socket
 from datetime import datetime
-from user import User
+import Security
+
 
 def log(typ: str, text: str):
     '''
@@ -12,7 +13,6 @@ def log(typ: str, text: str):
     [+] Success\n
     [N] Count
     '''
-
 
     timestamp = datetime.now()
 
@@ -27,12 +27,16 @@ class Babble:
         self.port = 27526
         self.ip = '127.0.0.1'
         self.is_connected = False
+        self.secure = Security.Security()
+
         log('!', f'Server IP {self.ip}')
         log('!', f'Server PORT {self.port}')
 
     def connect(self):
         try:
             self.socket.connect((self.ip, self.port))
+            self.is_connected = True
+            log('+', 'Connection made successfully to server')
         except:
             trial = 3
             while trial:
@@ -41,11 +45,17 @@ class Babble:
                 try:
                     log('.', 'Connecting...')
                     self.socket.connect((self.ip, self.port))
+                    self.is_connected = True
+                    log('+', 'Connection made successfully to server')
                 except:
                     log('-', 'Failed To connect!!!')
 
-    def send_messg(self):
+    def get_public_key(self, recv_id):
         pass
+
+    def send_messg(self, message, reciver_id):
+        if self.is_connected:
+            self.secure.personal_encrypt(message)
 
     def recieve_messg(self):
         pass
@@ -68,4 +78,5 @@ if __name__ == '__main__':
     # thread2 = threading.Thread(target=bab.connect())
 
     thread1.start()
+    print(bab.is_connected)
     # thread2.start()
