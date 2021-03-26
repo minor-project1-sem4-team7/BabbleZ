@@ -7,8 +7,8 @@ cls = Security.Security()
 # print('Private Key : ', cls.get_private_key())
 
 pvmsg = 'Hello This is a secret message'
-enc_msg = cls.private_encrypt(pvmsg)
-dec_msg = cls.private_decrypt(enc_msg)
+enc_msg = cls.personal_encrypt(pvmsg)
+dec_msg = cls.personal_decrypt(enc_msg)
 
 
 if pvmsg == dec_msg:
@@ -43,7 +43,7 @@ def zebrish(text):
     drop = list()
     secure = Security.Security()
 
-    encrypted_msg = secure.private_encrypt(text)
+    encrypted_msg = secure.personal_encrypt(text)
     drop.append(encrypted_msg)
 
     metadata = 'This Is app Meta Data , Encrypted by App Encryption'
@@ -52,7 +52,7 @@ def zebrish(text):
     drop.append(secure_meta)                            # Send over network
 
     received_metadata = secure.app_decrypt(drop[1])
-    original_msg = secure.private_decrypt(drop[0])
+    original_msg = secure.personal_decrypt(drop[0])
 
     if text == original_msg and metadata == received_metadata :
         print('[+] Combined Test Successfully Passed')
