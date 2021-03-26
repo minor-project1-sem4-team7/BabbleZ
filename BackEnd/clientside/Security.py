@@ -75,3 +75,7 @@ class Security:
                 - Key pickup form DB
                 - password pickup
         '''
+
+    @property
+    def public_key(self):
+        return self._public_key

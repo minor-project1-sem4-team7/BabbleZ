@@ -2,6 +2,10 @@ import threading
 import socket
 from datetime import datetime
 import Security
+import user
+import sys
+import base64
+import pickle
 
 
 def log(typ: str, text: str):
@@ -27,6 +31,7 @@ class Babble:
         self.port = 27526
         self.ip = '127.0.0.1'
         self.is_connected = False
+        self.profile = user.User()
         self.secure = Security.Security()
 
         log('!', f'Server IP {self.ip}')
@@ -51,11 +56,26 @@ class Babble:
                     log('-', 'Failed To connect!!!')
 
     def get_public_key(self, recv_id):
-        pass
+        print(recv_id)
+        return self.secure.public_key
 
-    def send_messg(self, message, reciver_id):
+    def send_messg(self, message, receiver_id):
         if self.is_connected:
-            self.secure.personal_encrypt(message)
+            drop = list()
+            pubkey = self.get_public_key(receiver_id)
+            drop.append(self.secure.personal_encrypt(message, pubkey))
+
+            metadata = list()
+            metadata.append(self.secure.app_encrypt(receiver_id))
+            metadata.append(self.secure.app_encrypt(self.profile.user_id))
+            metadata.append(self.secure.app_encrypt(str(datetime.now())))
+            metadata.append(self.secure.app_encrypt(str(sys.getsizeof(drop[0]))))
+
+            drop.append(metadata)
+            packet = pickle.dumps(drop)
+            print(type(packet))
+            # print(packet)
+            # print(pickle.loads(packet))
 
     def recieve_messg(self):
         pass
@@ -72,11 +92,5 @@ class Babble:
 
 if __name__ == '__main__':
     bab = Babble()
-    # bab.connect()
-
-    thread1 = threading.Thread(target=bab.connect())
-    # thread2 = threading.Thread(target=bab.connect())
-
-    thread1.start()
-    print(bab.is_connected)
-    # thread2.start()
+    bab.connect()
+    bab.send_messg('Hello What\'s app', 'noid')
