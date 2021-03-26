@@ -1,6 +1,6 @@
 import threading
 import socket
-import app_decrypt from server_security
+from server_security import Security
 
 def log(typ: str, text: str):
 
@@ -29,15 +29,17 @@ class Server:
         log('!',f'Server IP {self.ip}')
         log('!',f'Server PORT {self.port}')
 
-    def is_Active ():
-        bool active=func_call ()
+
+    def is_Active(self):
+
+        active=None         # Remaining
         if active==1:
-            return TRUE
+            return True
         else:
             return False
     
     def forward (self, drop):
-        list decypted_msg=app_decrypt (drop[1])
+        decypted_msg_list =Security.app_decrypt(drop[1])
         
         reciever_id=""
 
@@ -47,4 +49,5 @@ class Server:
         pass
 
     def send (self, drop):
+        pass
         

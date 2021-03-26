@@ -18,10 +18,11 @@ class Security:
 
         self.fetch_keys()
 
-    def private_encrypt(self, plain_text: str):
-        return rsa.encrypt(plain_text.encode(), self._private_key)
+    # Encrypt with, receiver's public key
+    def personal_encrypt(self, plain_text: str, public_key):
+        return rsa.encrypt(plain_text.encode(), public_key)
 
-    def private_decrypt(self, crypt_text):
+    def personal_decrypt(self, crypt_text):
         return rsa.decrypt(crypt_text, self._private_key).decode()
 
     def app_encrypt(self, data):
@@ -74,3 +75,7 @@ class Security:
                 - Key pickup form DB
                 - password pickup
         '''
+
+    @property
+    def public_key(self):
+        return self._public_key
