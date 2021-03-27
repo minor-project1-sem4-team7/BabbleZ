@@ -12,69 +12,72 @@ update  - update document in collection
 insert  - insert document into collection 
 """
 
-host = os.environ.get('MONGO_HOST') or 'localhost'
-port = os.environ.get('MONGO_PORT') or '27017'
-username = os.environ.get('MONGO_USERNAME') or 'admin'
-password = os.environ.get('MONGO_PASSWORD') or 'admin'
-database = os.environ.get('MONGO_DB') or 'BabbleZ'
 
-# client = MongoClient('mongodb://' + username + ':' + password + '@' + host + ':' + str(port) + '/admin')
-client = MongoClient(f'mongodb://{host}:{port}')
+class database:
 
+    def __init__(self):
 
-# CRUD for Mongo
+        self.host = 'localhost'
+        self.port = '27017'
+        self.database = 'BabbleZ'
 
-# Insert
-def insert(collection, json):
-    return str(client[database][collection].insert(json))
+        self.client = MongoClient(f'mongodb://{self.host}:{self.port}')
 
+    # host = os.environ.get('MONGO_HOST') or 'localhost'
+    # port = os.environ.get('MONGO_PORT') or '27017'
+    # username = os.environ.get('MONGO_USERNAME') or 'admin'
+    # password = os.environ.get('MONGO_PASSWORD') or 'admin'
+    # database = os.environ.get('MONGO_DB') or 'BabbleZ'
 
-# Update
-def update(collection, _id, dic):
-    client[database][collection].update_one({'_id': ObjectId(_id)}, {"$set": dic}, upsert=True)
+    # client = MongoClient('mongodb://' + username + ':' + password + '@' + host + ':' + str(port) + '/admin')
+    # client = MongoClient(f'mongodb://{host}:{port}')
 
+    # CRUD for Mongo
 
-# Get all
-def get_all(collection, filter_field, filter_value):
-    final_results = []
-    results = client[database][collection].find({filter_field: filter_value})
-    for result in results:
-        final_results.append(str(result))
-    return final_results
+    # Insert
+    def insert(self, collection, json):
+        return str(self.client[self.database][collection].insert(json))
 
+    # Update
+    def update(self, collection, _id, dic):
+        self.client[self.database][collection].update_one({'_id': ObjectId(_id)}, {"$set": dic}, upsert=True)
 
-# Get One
-def get_one(collection, filter_field, filter_value):
-    results = client[database][collection].find({filter_field: filter_value})
-    for result in results:
-        return result
+    # Get all
+    def get_all(self, collection, filter_field, filter_value):
+        final_results = []
+        results = self.client[self.database][collection].find({filter_field: filter_value})
+        for result in results:
+            final_results.append(str(result))
+        return final_results
 
+    # Get One
+    def get_one(self, collection, filter_field, filter_value):
+        results = self.client[self.database][collection].find({filter_field: filter_value})
+        for result in results:
+            return result
 
-# Get collection
-def get_collection(collection):
-    results = client[database][collection].find({})
-    for result in results:
-        return result
+    # Get collection
+    def get_collection(self, collection):
+        results = self.client[self.database][collection].find({})
+        for result in results:
+            return result
 
+    # search
+    def search_one(self, collection, json):
+        results = self.client[self.database][collection].find(json)
+        for result in results:
+            return result
 
-# search
-def search_one(collection, json):
-    results = client[database][collection].find(json)
-    for result in results:
-        return result
+    # Get by id
+    def get_by_id(self, collection, _id):
+        results = self.client[self.database][collection].find({"_id": ObjectId(_id)})
+        for result in results:
+            return result
 
+    # Delete
+    def delete(self, collection, _id):
+        self.client[self.database][collection].delete_one({"_id": ObjectId(_id)})
 
-# Get by id
-def get_by_id(collection, _id):
-    results = client[database][collection].find({"_id": ObjectId(_id)})
-    for result in results:
-        return result
-
-
-# Delete
-def delete(collection, _id):
-    client[database][collection].delete_one({"_id": ObjectId(_id)})
 
 if __name__ == '__main__':
-    for i in get_all('users','username','novoice'):
-        print(type(i))
+    pass
