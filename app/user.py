@@ -10,9 +10,6 @@ class User:
         self.user_dp = None
         self.user_about = None
 
-        # Testing Purpose
-        self.user_id = 'SuperHash'
-
     def check_userid(self, id) -> bool:
         pass
 

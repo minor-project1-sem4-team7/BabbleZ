@@ -13,7 +13,7 @@ insert  - insert document into collection
 """
 
 
-class database:
+class MongoDAO:
 
     def __init__(self):
 
@@ -59,8 +59,10 @@ class database:
     # Get collection
     def get_collection(self, collection):
         results = self.client[self.database][collection].find({})
+        final_results = []
         for result in results:
-            return result
+            final_results.append(result)
+        return final_results
 
     # search
     def search_one(self, collection, json):
@@ -78,6 +80,51 @@ class database:
     def delete(self, collection, _id):
         self.client[self.database][collection].delete_one({"_id": ObjectId(_id)})
 
+    def get_publicKey(self, user_id):
+        return self.get_one('Friends', 'user_id', user_id)["public_key"]
+
+    def get_myKeys(self, user_id):
+        return self.get_one('Friends', 'user_id', user_id)["public_key"]
+
+    def get_privateKey(self, user_id):
+        return self.get_one('Friends', 'user_id', user_id)["private_key"]
+
+    def if_user_exist(self, user_id):
+        if self.search_one('Profile', {"user_id": user_id}):
+            return True
+        else:
+            return False
+
+    def if_friend_exist(self, user_id):
+        if self.search_one('Friend', {"user_id": user_id}):
+            return True
+        else:
+            return False
+
+    def get_user_password(self, user_id):
+        return self.get_one("Profile","user_id",user_id)["password"]
+
+
 
 if __name__ == '__main__':
-    pass
+
+    db = MongoDAO()
+
+    print(db.get_user_password("tester"))
+
+    # print(db.get_privateKey('Abcd'))
+    # if db.search_one('Profile', {"user_id": 'Abcd'}):
+    #     print(True)
+    # else:
+    #     print(False)
+
+'''
+
+Database : BabbleZ
+    Collection : Profile
+    Collection : Friends
+        
+    Collection : Messages
+    
+
+'''

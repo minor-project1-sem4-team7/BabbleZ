@@ -4,6 +4,18 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import hashlib
+
+
+def salt_key(data):
+    new_pass = data[:1] + '@4fsf4f' + \
+               data[1:len(data) - 3] + '%5ssg' + data[len(data) - 3:]
+    return new_pass
+
+
+def hash_str(string: str):
+    string = salt_key(string)
+    return hashlib.sha512(string.encode()).hexdigest()
 
 
 class Security:
@@ -14,9 +26,9 @@ class Security:
         self.sender_key = None
         self._app_key = None
         self.key_status = False
-        self.password = 'Hello_wwrsfaffasfrrssvg h7'            # test password variable REMAINING
+        self.password = None  # test password variable REMAINING
 
-        self.fetch_keys()
+        # self.fetch_keys()
 
     # Encrypt with, receiver's public key
     def personal_encrypt(self, plain_text: str, public_key):
@@ -41,11 +53,6 @@ class Security:
         return self._public_key
 
     def fetch_keys(self):
-        def salt_key(data):
-            new_pass = data[:1] + '@4fsf4f' + \
-                       data[1:len(data) - 3] + '%5ssg' + data[len(data) - 3:]
-            return new_pass
-
         def gen_key(data):
             data = salt_key(data)
             data = data.encode()
@@ -61,21 +68,28 @@ class Security:
 
         def generate_keys(password) -> None:
             self._public_key, self._private_key = rsa.newkeys(2048)
-            self._app_key = gen_key(password)       # generate REMAINING
+            self._app_key = gen_key(password)  # generate REMAINING
 
         # get database keys or generate keys
         generate_keys(self.password)
         # get local keys function REMAINING
 
-
-        '''
-            REMAINING :
-                - SQL sync
-                - First time cryptography
-                - Key pickup form DB
-                - password pickup
-        '''
+    '''
+        REMAINING :
+            - SQL sync
+            - First time cryptography
+            - Key pickup form DB
+            - password pickup
+    '''
 
     @property
     def public_key(self):
         return self._public_key
+
+
+if __name__ == '__main__':
+    obj = Security()
+    print(hash_str('My Password _%3 syesf32@5235'))
+    # obj.fetch_keys()
+    # print(obj._private_key)
+    # print(obj._public_key)

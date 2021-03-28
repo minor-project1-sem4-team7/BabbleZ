@@ -5,6 +5,7 @@ import Security
 import user
 import sys
 import pickle
+import mongo_dao
 
 
 def log(typ: str, text: str):
@@ -26,16 +27,39 @@ def log(typ: str, text: str):
 
 class Babble:
     def __init__(self):
+        self.dao = mongo_dao.MongoDAO()
+        self.profile = user.User()
+
+        def loading_user_data():
+            if len(self.dao.get_collection('Profile')):
+                username = input('Enter Username : ')  # TEMP REMAINING        Flask Connect
+                password = input('Enter Password : ')  # TEMP REMAINING        Flask Connect
+
+                while self.dao.get_user_password(username) != Security.hash_str(password):
+                    return 'Failed To Login'  # TEMP REMAINING
+
+            else:
+                return 'No user Found'  # TEMP REMAINING
+
+        self.secure = Security.Security()
         self.socket = socket.socket()
         self.port = 27526
         self.ip = '127.0.0.1'
         self.is_connected = False
-        self.profile = user.User()
-        self.secure = Security.Security()
 
         log('!', f'Server IP {self.ip}')
         log('!', f'Server PORT {self.port}')
 
+        self.secure.password = self.dao.get_one('Profile', 'user_id', self.profile.user_id)["password"]
+
+    # loading user credential keys
+    def load_user_keys(self):
+        my_id = self.profile.user_id
+        if self.dao.if_user_exist(my_id):
+            self.secure._public_key = self.dao.get_publicKey(my_id)
+            self.secure._private_key = self.dao.get_privateKey(my_id)
+
+    # connecting to server
     def connect(self):
         try:
             self.socket.connect((self.ip, self.port))
@@ -54,10 +78,12 @@ class Babble:
                 except:
                     log('-', 'Failed To connect!!!')
 
+    # get public key of provided user id
     def get_public_key(self, recv_id):
-        print(recv_id)
+        self.dao.get_publicKey(recv_id)
         return self.secure.public_key
 
+    # send message method
     def send_messg(self, message, receiver_id):
         if self.is_connected:
             drop = list()
@@ -72,9 +98,7 @@ class Babble:
 
             drop.append(metadata)
             packet = pickle.dumps(drop)
-            print(type(packet))
-            # print(packet)
-            # print(pickle.loads(packet))
+            print(packet)
 
     def recieve_messg(self):
         pass
@@ -92,4 +116,4 @@ class Babble:
 if __name__ == '__main__':
     bab = Babble()
     bab.connect()
-    bab.send_messg('Hello What\'s app', 'noid')
+    bab.send_messg('Hello Whats app', 'Abcd')

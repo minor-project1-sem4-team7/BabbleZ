@@ -149,3 +149,4 @@ temp_folder/
 /BackEnd/.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
 /BackEnd/.idea/vcs.xml
+venv/
