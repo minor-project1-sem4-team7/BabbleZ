@@ -12,7 +12,7 @@ def my_home():
 @babbleZ_app.route('/<string:page_name>')
 def html_page(page_name):
     try:
-        return render_template(page_name)
+        return render_template(page_name+'.html')
     except:
         return render_template('error404.html')
 
