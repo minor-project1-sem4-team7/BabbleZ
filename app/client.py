@@ -26,14 +26,12 @@ def log(typ: str, text: str):
 
 
 class Babble:
-    def __init__(self):
+    def __init__(self, username, password):
         self.dao = mongo_dao.MongoDAO()
         self.profile = user.User()
 
         def loading_user_data():
             if len(self.dao.get_collection('Profile')):
-                username = input('Enter Username : ')  # TEMP REMAINING        Flask Connect
-                password = input('Enter Password : ')  # TEMP REMAINING        Flask Connect
 
                 while self.dao.get_user_password(username) != Security.hash_str(password):
                     return 'Failed To Login'  # TEMP REMAINING
