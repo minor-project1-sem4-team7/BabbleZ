@@ -26,18 +26,29 @@ def log(typ: str, text: str):
 
 
 class Babble:
-    def __init__(self, username, password):
+
+    def __int__(self, username, password, userid, dp ):
+        pass
+
+    def __init__(self, user_id, password):
         self.dao = mongo_dao.MongoDAO()
         self.profile = user.User()
 
         def loading_user_data():
             if len(self.dao.get_collection('Profile')):
 
-                while self.dao.get_user_password(username) != Security.hash_str(password):
+                trial = 5
+                while self.dao.get_user_password(user_id) != Security.hash_str(password) or trial > 0:
+                    trial -= 1
                     return 'Failed To Login'  # TEMP REMAINING
 
             else:
                 return 'No user Found'  # TEMP REMAINING
+
+        loading_user_data()
+
+
+
 
         self.secure = Security.Security()
         self.socket = socket.socket()
