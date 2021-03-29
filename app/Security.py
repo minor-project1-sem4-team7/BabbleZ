@@ -89,7 +89,13 @@ class Security:
 
 if __name__ == '__main__':
     obj = Security()
-    print(hash_str('My Password _%3 syesf32@5235'))
-    # obj.fetch_keys()
-    # print(obj._private_key)
-    # print(obj._public_key)
+    obj.password = 'Akash_password_mnChar'
+    # print(hash_str('Akash_password_mnChar'))
+    # print(hash_str('Himanshu_password_Otakuu'))
+    # print(hash_str('Amarnath_password_arch'))
+    # print(hash_str('Swati_password_Swati-P11'))
+    # print(hash_str('K!!L$Y'))
+
+    obj.fetch_keys()
+    print(obj._private_key)
+    print(obj._public_key)
