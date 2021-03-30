@@ -33,23 +33,24 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
     def __init__(self, user_id, password):
         mongo_dao.MongoDAO.__init__(self)
         user.User.__init__(self)
+        self.logged_in = False
 
         def loading_user_data():
             if self.if_user_exist(user_id):
 
-                trial = 5
-                while self.get_user_password(user_id) != Security.hash_str(password) and trial > 0:
-                    trial -= 1
-                    print('Failed To Login')  # TEMP REMAINING
-                log('+', f'Logged In Successfully as {user_id}')
-
-                user_dict = self.get_one('Profile','user_id',user_id)
-                self.user_id = user_id
-                self.username = user_dict["username"]
-                self.user_dp = user_dict["display_profile"]
+                if self.get_user_password(user_id) == Security.hash_str(password) :
+                    self.logged_in = True
+                    log('+', f'Logged In Successfully as {user_id}')
+                    user_dict = self.get_one('Profile','user_id',user_id)
+                    print(user_dict)
+                    self.user_id = user_id
+                    self.username = user_dict["username"]
+                    self.user_dp = user_dict["display_profile"]
+                else:
+                    raise str("Failed")
 
             else:
-                print('User Not Found')  # TEMP REMAINING
+                raise str("user not found")
 
         loading_user_data()
         Security.Security.__init__(self, self.get_publicKey(user_id), self.get_privateKey(user_id), self.get_one('Profile', 'user_id', self.user_id)["password"])
@@ -86,20 +87,21 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
     # get public key of provided user id
     def get_public_key(self, recv_id):
-        if
+        if self.if_user_exist(recv_id):
+            return self.get_publicKey(recv_id)
 
     # send message method
     def send_messg(self, message, receiver_id):
         if self.is_connected:
             drop = list()
             pubkey = self.get_public_key(receiver_id)
-            drop.append(self.secure.personal_encrypt(message, pubkey))
+            drop.append(Security.personal_encrypt(message, pubkey))
 
             metadata = list()
-            metadata.append(self.secure.app_encrypt(receiver_id))
-            metadata.append(self.secure.app_encrypt(self.user_id))
-            metadata.append(self.secure.app_encrypt(str(datetime.now())))
-            metadata.append(self.secure.app_encrypt(str(sys.getsizeof(drop[0]))))
+            metadata.append(self.app_encrypt(receiver_id))
+            metadata.append(self.app_encrypt(self.user_id))
+            metadata.append(self.app_encrypt(str(datetime.now())))
+            metadata.append(self.app_encrypt(str(sys.getsizeof(drop[0]))))
 
             drop.append(metadata)
             packet = pickle.dumps(drop)
