@@ -1,5 +1,6 @@
 import threading
 import socket
+import pickle
 from server_security import Security
 
 def log(typ: str, text: str):
@@ -22,12 +23,31 @@ def log(typ: str, text: str):
 
 class Server:
     def __init__(self):
-        self.socket = socket.socket()
-        self.port = 27526
-        self.ip = '127.0.0.1'
-        self.is_connected = False
-        log('!',f'Server IP {self.ip}')
-        log('!',f'Server PORT {self.port}')
+        self.server = socket.socket()
+        server.bind (socket.gethostname (), 27526) 
+        server.listen (5)
+
+        while true: 
+            client_socket, 
+        #self.clientport = 27526
+        #self.clientip = '127.0.0.1'
+        #self.is_connected = False
+        #log('!',f'Server IP {self.ip}')
+        #log('!',f'Server PORT {self.port}')
+
+    def create_socket ():
+        try:
+    
+            global server
+            server = socket.socket (AF_INET, SOCK_STREAM)
+            server.bind (('0.0.0.0', 27526))
+            server.listen (5)
+
+        except:
+            log('-',f'Error: unable to create socket')
+            exit (-1)
+
+    
 
 
     def is_Active(self):
@@ -37,17 +57,22 @@ class Server:
             return True
         else:
             return False
+
+     def send (self, drop):
+        clientsocket.send ((pickle.dumps(drop))
     
     def forward (self, drop):
         decypted_msg_list =Security.app_decrypt(drop[1])
-        
-        reciever_id=""
-
-
+        #reciever_id=""
+        send (decypted_msg_list)
     
     def save_messg(self):
         pass
 
-    def send (self, drop):
-        pass
+    def recieve (self):
+
+    def connect (self):
+
+
+   
         
