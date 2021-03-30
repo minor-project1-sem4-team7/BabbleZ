@@ -13,25 +13,36 @@ def salt_key(data):
     return new_pass
 
 
-
 def hash_str(string: str):
     string = salt_key(string)
     return hashlib.sha512(string.encode()).hexdigest()
 
 
+# Encrypt with, receiver's public key
 def personal_encrypt(plain_text: str, public_key):
     return rsa.encrypt(plain_text.encode(), public_key)
 
 
+def gen_key(data):
+    data = salt_key(data)
+    data = data.encode()
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=b'@0#5T13dgrgjjss9e23sTh',
+        iterations=100000,
+        backend=default_backend()
+    )
+    return base64.urlsafe_b64encode(kdf.derive(data))
+
+
 class Security:
 
-    def __init__(self, publicKey, privateKey) -> None:
+    def __init__(self, publicKey, privateKey, passw) -> None:
         self._public_key = publicKey
         self._private_key = privateKey
-        self._app_key = None
-        self.key_status = False
-
-    # Encrypt with, receiver's public key
+        self.password = passw
+        self._app_key = gen_key(passw)
 
     def personal_decrypt(self, crypt_text):
         return rsa.decrypt(crypt_text, self._private_key).decode()
@@ -51,27 +62,9 @@ class Security:
     def get_private_key(self) -> str:
         return self._public_key
 
-    def fetch_keys(self):
-        def gen_key(data):
-            data = salt_key(data)
-            data = data.encode()
-            kdf = PBKDF2HMAC(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=b'@0#5T13dgrgjjss9e23sTh',
-                iterations=100000,
-                backend=default_backend()
-            )
-
-            return base64.urlsafe_b64encode(kdf.derive(data))
-
-        def generate_keys(password) -> None:
-            self._public_key, self._private_key = rsa.newkeys(2048)
-            self._app_key = gen_key(password)  # generate REMAINING
-
-        # get database keys or generate keys
-        generate_keys(self.password)
-        # get local keys functibiton REMAINING
+    def generate_keys(self):
+        self._public_key, self._private_key = rsa.newkeys(2048)
+        self._app_key = gen_key(self.password)
 
     '''
         REMAINING :

@@ -35,7 +35,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
         user.User.__init__(self)
 
         def loading_user_data():
-            if len(self.get_collection('Profile')):
+            if self.if_user_exist(user_id):
 
                 trial = 5
                 while self.get_user_password(user_id) != Security.hash_str(password) and trial > 0:
@@ -49,10 +49,11 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
                 self.user_dp = user_dict["display_profile"]
 
             else:
-                print('No user Found')  # TEMP REMAINING
+                print('User Not Found')  # TEMP REMAINING
 
         loading_user_data()
-        Security.Security.__init__(self, self.get_publicKey(user_id), self.get_privateKey(user_id))
+        Security.Security.__init__(self, self.get_publicKey(user_id), self.get_privateKey(user_id), self.get_one('Profile', 'user_id', self.user_id)["password"])
+        self.password = self.get_one('Profile', 'user_id', self.user_id)["password"]
 
         self.socket = socket.socket()
         self.port = 27526
@@ -62,14 +63,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
         log('!', f'Server IP {self.ip}')
         log('!', f'Server PORT {self.port}')
 
-        self.secure.password = self.get_one('Profile', 'user_id', self.user_id)["password"]
-
-    # loading user credential keys
-    def load_user_keys(self):
-        my_id = self.user_id
-        if self.if_user_exist(my_id):
-            self.secure._public_key = self.get_publicKey(my_id)
-            self.secure._private_key = self.get_privateKey(my_id)
+        self.connect()
 
     # connecting to server
     def connect(self):
@@ -92,8 +86,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
     # get public key of provided user id
     def get_public_key(self, recv_id):
-        self.get_publicKey(recv_id)
-        return self.secure.public_key
+        if
 
     # send message method
     def send_messg(self, message, receiver_id):

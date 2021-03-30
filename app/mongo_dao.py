@@ -80,6 +80,8 @@ class MongoDAO:
     def delete(self, collection, _id):
         self.client[self.database][collection].delete_one({"_id": ObjectId(_id)})
 
+    # Derived
+
     def get_publicKey(self, user_id):
         return self.get_one('Friends', 'user_id', user_id)["public_key"]
 
