@@ -18,21 +18,19 @@ def hash_str(string: str):
     return hashlib.sha512(string.encode()).hexdigest()
 
 
+def personal_encrypt(plain_text: str, public_key):
+    return rsa.encrypt(plain_text.encode(), public_key)
+
+
 class Security:
 
-    def __init__(self) -> None:
-        self._public_key = None
-        self._private_key = None
-        self.sender_key = None
+    def __init__(self, publicKey, privateKey) -> None:
+        self._public_key = publicKey
+        self._private_key = privateKey
         self._app_key = None
         self.key_status = False
-        self.password = None  # test password variable REMAINING
-
-        # self.fetch_keys()
 
     # Encrypt with, receiver's public key
-    def personal_encrypt(self, plain_text: str, public_key):
-        return rsa.encrypt(plain_text.encode(), public_key)
 
     def personal_decrypt(self, crypt_text):
         return rsa.decrypt(crypt_text, self._private_key).decode()
@@ -72,7 +70,7 @@ class Security:
 
         # get database keys or generate keys
         generate_keys(self.password)
-        # get local keys function REMAINING
+        # get local keys functibiton REMAINING
 
     '''
         REMAINING :
@@ -89,13 +87,12 @@ class Security:
 
 if __name__ == '__main__':
     obj = Security()
-    obj.password = 'Akash_password_mnChar'
+    # obj.password = 'Akash_password_mnChar'
     # print(hash_str('Akash_password_mnChar'))
     # print(hash_str('Himanshu_password_Otakuu'))
     # print(hash_str('Amarnath_password_arch'))
     # print(hash_str('Swati_password_Swati-P11'))
-    # print(hash_str('K!!L$Y'))
 
-    obj.fetch_keys()
-    print(obj._private_key)
-    print(obj._public_key)
+    # obj.fetch_keys()
+    # print(obj._private_key)
+    # print(obj._public_key)

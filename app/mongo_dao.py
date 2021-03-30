@@ -109,14 +109,9 @@ class MongoDAO:
 if __name__ == '__main__':
 
     db = MongoDAO()
+    dt = db.get_one('Profile','user_id','superuser_Arnav')
 
-    print(db.get_user_password("tester"))
-
-    # print(db.get_privateKey('Abcd'))
-    # if db.search_one('Profile', {"user_id": 'Abcd'}):
-    #     print(True)
-    # else:
-    #     print(False)
+    print(dt["about"])
 
 '''
 

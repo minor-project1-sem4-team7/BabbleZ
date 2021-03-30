@@ -2,7 +2,7 @@
 # Security
 import Security
 
-cls = Security.Security()
+cls = Security
 
 # print('Private Key : ', cls.get_private_key())
 
@@ -41,7 +41,7 @@ my_msg = text = 'Hello This is my Private secret Message - hey Devil You There ?
 
 def zebrish(text):
     drop = list()
-    secure = Security.Security()
+    secure = Security
 
     encrypted_msg = secure.personal_encrypt(text)
     drop.append(encrypted_msg)

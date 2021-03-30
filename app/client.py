@@ -25,32 +25,35 @@ def log(typ: str, text: str):
         file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
 
 
-class Babble:
+class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
-    def __int__(self, username, password, userid, dp ):
+    def __int__(self, username, password, userid, dp):
         pass
 
     def __init__(self, user_id, password):
-        self.dao = mongo_dao.MongoDAO()
-        self.profile = user.User()
+        mongo_dao.MongoDAO.__init__(self)
+        user.User.__init__(self)
 
         def loading_user_data():
-            if len(self.dao.get_collection('Profile')):
+            if len(self.get_collection('Profile')):
 
                 trial = 5
-                while self.dao.get_user_password(user_id) != Security.hash_str(password) or trial > 0:
+                while self.get_user_password(user_id) != Security.hash_str(password) and trial > 0:
                     trial -= 1
-                    return 'Failed To Login'  # TEMP REMAINING
+                    print('Failed To Login')  # TEMP REMAINING
+                log('+', f'Logged In Successfully as {user_id}')
+
+                user_dict = self.get_one('Profile','user_id',user_id)
+                self.user_id = user_id
+                self.username = user_dict["username"]
+                self.user_dp = user_dict["display_profile"]
 
             else:
-                return 'No user Found'  # TEMP REMAINING
+                print('No user Found')  # TEMP REMAINING
 
         loading_user_data()
+        Security.Security.__init__(self, self.get_publicKey(user_id), self.get_privateKey(user_id))
 
-
-
-
-        self.secure = Security.Security()
         self.socket = socket.socket()
         self.port = 27526
         self.ip = '127.0.0.1'
@@ -59,14 +62,14 @@ class Babble:
         log('!', f'Server IP {self.ip}')
         log('!', f'Server PORT {self.port}')
 
-        self.secure.password = self.dao.get_one('Profile', 'user_id', self.profile.user_id)["password"]
+        self.secure.password = self.get_one('Profile', 'user_id', self.user_id)["password"]
 
     # loading user credential keys
     def load_user_keys(self):
-        my_id = self.profile.user_id
-        if self.dao.if_user_exist(my_id):
-            self.secure._public_key = self.dao.get_publicKey(my_id)
-            self.secure._private_key = self.dao.get_privateKey(my_id)
+        my_id = self.user_id
+        if self.if_user_exist(my_id):
+            self.secure._public_key = self.get_publicKey(my_id)
+            self.secure._private_key = self.get_privateKey(my_id)
 
     # connecting to server
     def connect(self):
@@ -89,7 +92,7 @@ class Babble:
 
     # get public key of provided user id
     def get_public_key(self, recv_id):
-        self.dao.get_publicKey(recv_id)
+        self.get_publicKey(recv_id)
         return self.secure.public_key
 
     # send message method
@@ -101,7 +104,7 @@ class Babble:
 
             metadata = list()
             metadata.append(self.secure.app_encrypt(receiver_id))
-            metadata.append(self.secure.app_encrypt(self.profile.user_id))
+            metadata.append(self.secure.app_encrypt(self.user_id))
             metadata.append(self.secure.app_encrypt(str(datetime.now())))
             metadata.append(self.secure.app_encrypt(str(sys.getsizeof(drop[0]))))
 
@@ -123,6 +126,6 @@ class Babble:
 
 
 if __name__ == '__main__':
-    bab = Babble()
-    bab.connect()
-    bab.send_messg('Hello Whats app', 'Abcd')
+    bab = Babble('superuser_Arnav','K!!L$Y')
+    # bab.connect()
+    # bab.send_messg('Hello Whats app', 'Abcd')

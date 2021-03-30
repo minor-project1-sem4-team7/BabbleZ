@@ -32,5 +32,5 @@ def create_user(userid, username, password):
 if __name__ == "__main__":
     # Mongo Server start
     # os check, specific based changed
-    babbleZ_app.run(debug=False)
+    babbleZ_app.run(debug=True)
     usr = client.Babble()
