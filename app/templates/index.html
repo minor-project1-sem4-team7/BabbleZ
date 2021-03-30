@@ -65,14 +65,14 @@
                <div class="text">
                   Login
                </div>
-               <form action="#">
+               <form action="#" method="post">
                   <div class="data">
-                     <label>UserName</label>
-                     <input type="text" required>
+                     <label>Userid</label>
+                     <input type="text" name="loginid" required>
                   </div>
                   <div class="data">
                      <label>Password</label>
-                     <input type="password" required>
+                     <input type="password" name="loginpassword" required>
                   </div>
                   <div class="btn">
                      <div class="inner">
@@ -92,11 +92,11 @@
                <div class="text">
                   Sign Up
                </div>
-               <form action="#" >
+               <form action="#" method="post" >
                   <div class="data">
                      <div class="row">
                         <div class="col">
-                          <input type="text" class="form-control" title="Must be unique" placeholder="User id" required>
+                          <input type="text" class="form-control" title="Must be unique" placeholder="User id" name="signupid"required>
                         </div>
                         <div class="col">
                           <input type="text" class="form-control" placeholder="Username " required>
@@ -112,22 +112,22 @@
                    <fieldset>
                   <div class="md-form">
                      <i class="fas fa-lock prefix grey-text d-flex"></i>
-                     <input type="password" class="form-control validate" placeholder="password" id="password" required>
-                  
+                     <input type="password" class="form-control validate" placeholder="password" id="password" name="signuppassword" required>
+
                    </div>
                    <br>
-                 
+
 
                    <div class="md-form">
                      <i class="fas fa-lock prefix grey-text d-flex"></i>
                      <input type="password" class="form-control" placeholder="Confirm Password" id="confirm_password" required>
                    </div>
                   </fieldset>
-                  
+
                   <div class="btn">
                      <div class="inner">
                      </div>
-                     <button type="submit"  onclick="nextlevel()" >Create Account</button>
+                     <button type="submit" >Create Account</button>
                   </div>
                </form>
             </div>

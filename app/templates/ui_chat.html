@@ -7,14 +7,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<<<<<<< HEAD
 <link rel="stylesheet" type="text/css" href="/current/second/folder/style.css">
+=======
+>>>>>>> cc2bc3e93ba0d4de73b5d512a5a330cd932af202
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<!-- 
-Reference image: https://telegram.org/file/811140968/3/UfbcOfXv2YU.118417/b230905e577f9cc2de 
+<!--
+Reference image: https://telegram.org/file/811140968/3/UfbcOfXv2YU.118417/b230905e577f9cc2de
 
 LICENSE: https://creativecommons.org/licenses/by/3.0/
 -->
@@ -30,23 +33,23 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
     <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
 </svg>
 			</button>
-			
+
 			<input class="searchChats" type="search" placeholder="Search..."/>
 		</header>
 		<div class="chats">
 			<div class="chatButton active">
 				<div class="chatInfo">
 				<div class="image my-image">
-				
+
 				</div>
-				
+
 				<p class="name">
 					Renan Mayrinck
 				</p>
-				
+
 				<p class="message">Actually, more ...</p>
 				</div>
-				
+
 				<div class="status onTop">
 					<p class="date">00:02</p>
 					<p class="count">10</p>
@@ -56,20 +59,20 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 </svg>
 				</div>
 			</div>
-			
+
 			<div class="chatButton">
 				<div class="chatInfo">
 				<div class="image">
-				
+
 				</div>
-				
+
 				<p class="name">
 					Doge
 				</p>
-				
+
 				<p class="message">Wow!</p>
 				</div>
-				
+
 				<div class="status normal">
 					<p class="date">Now</p>
 					<p class="count">42</p>
@@ -79,7 +82,7 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="rightPanel">
 		<div class="topBar">
 			<div class="rightSide">
@@ -90,42 +93,62 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 					<i class="material-icons">more_vert</i>
 				</button>
 			</div>
-			
+
 			<div class="leftSide">
 			<p class="chatName">Renan Mayrinck <span>@Grisson</span></p>
 			<p class="chatStatus">Online</p>
 			</div>
 		</div>
-		
+
 		<div class="convHistory userBg">
 			<!-- CONVERSATION GOES HERE! -->
-			
+
+			{% for x in message_backend %}
+				{% for key in x %}
+					{% if key== 'sent' %}
+						<div class="msg messageSent">
+
+							{{x[key]}}
+							<i class="material-icons readStatus">done_all</i>
+							<span class="timestamp">00:01</span>
+						</div>
+					{% else %}
+						<div class="msg messageReceived">
+							{{x[key]}}
+							<span class="timestamp">00:00</span>
+						</div>
+
+					{% endif %}
+				{% endfor %}
+
+			{% endfor %}
+<!--
 			<div class="msg messageReceived">
 				Dude, why no one did this before?
 				<span class="timestamp">00:00</span>
 			</div>
-			
+
 			<div class="msg messageSent">
 				Dunno...
 				<i class="material-icons readStatus">done_all</i>
 				<span class="timestamp">00:01</span>
 			</div>
-			
+
 			<div class="msg messageReceived">
 				This don't matter now, I did it!
 				<span class="timestamp">00:02</span>
 			</div>
-			
+
 			<div class="msg messageReceived">
 				Hope someone see this... Someday...
 				<span class="timestamp">00:02</span>
 			</div>
-			
+
 			<div class="msg messageSent">
 				Actually, more than 2000 people did this.
 				<i class="material-icons readStatus">done</i>
 				<span class="timestamp">00:04</span>
-			</div>
+			</div> -->
 		</div>
 		
 		<div class="replyBar">
