@@ -5,7 +5,7 @@ class User:
 
     def __init__(self):
         self.user_id = None
-        self.user_name = None
+        self.username = None
         self.user_password = None
         self.user_dp = None
         self.user_about = None
@@ -30,7 +30,7 @@ class User:
         if re.findall(allowed_char, name):
             print('Not Allowed')  # TEMP
         else:
-            self.user_name = name
+            self.username = name
 
     def get_user_password(self):
 
