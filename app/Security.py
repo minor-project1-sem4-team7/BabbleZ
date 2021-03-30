@@ -13,6 +13,7 @@ def salt_key(data):
     return new_pass
 
 
+
 def hash_str(string: str):
     string = salt_key(string)
     return hashlib.sha512(string.encode()).hexdigest()
