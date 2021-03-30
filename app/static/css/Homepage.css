@@ -260,10 +260,10 @@ footer{
     width: 600px;
     height:500px;
     border-radius: 15px;
-    box-shadow: 10px 10px 20px hsl(259, 100%, 67%);
+    box-shadow: 10px 10px 20px hsl(0deg 0% 0%);
     padding: 2%;
-    background-image: linear-gradient(to top left, hsl(215, 100%, 82%) 0%, #bba0ff 90%);
-    opacity: 0.85;
+    background-image: linear-gradient(to top left, hsl(230deg 65% 39% / 91%) 0%, #000000 90%);
+    opacity: .85;
   }
 
 
