@@ -151,3 +151,6 @@ temp_folder/
 /BackEnd/.idea/vcs.xml
 venv/
 Database/
+backup/
+logfile.txt
+app_log.txt
