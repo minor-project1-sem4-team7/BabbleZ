@@ -86,7 +86,10 @@ class MongoDAO:
         return self.get_one('Friends', 'user_id', user_id)["public_key"]
 
     def get_myKeys(self, user_id):
-        return self.get_one('Friends', 'user_id', user_id)["public_key"]
+        keys = list()
+        keys.append(self.get_one('Profile', 'user_id', user_id)["public_key"])
+        keys.append(self.get_one('Profile', 'user_id', user_id)["private_key"])
+        return keys
 
     def get_privateKey(self, user_id):
         return self.get_one('Friends', 'user_id', user_id)["private_key"]
@@ -111,6 +114,15 @@ class MongoDAO:
 if __name__ == '__main__':
 
     db = MongoDAO()
+    # js_obj = {"user_id": "userid",
+    #           "username": 'username',
+    #           "password": 'password',
+    #           "public_key": 'public_key',
+    #           "private_key": '_private_key',
+    #           "about": 'not_set_yet',
+    #           "display_profile": 'user_dp'
+    #           }
+    # db.insert('Profile', js_obj)
     dt = db.get_one('Profile','user_id','superuser_Arnav')
 
     print(dt["about"])
@@ -121,7 +133,14 @@ Database : BabbleZ
     Collection : Profile
     Collection : Friends
         
-    Collection : Messages
+    Collection : user_id
+        friend_id : 
+        friend_public_key:
+        friend_username :
+        Messages:{
+            recieve:
+            sent:
+        }
     
 
 '''

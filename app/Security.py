@@ -1,5 +1,6 @@
 import rsa
 import base64
+from hashlib import sha256
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -19,7 +20,7 @@ def hash_str(string: str):
 
 
 # Encrypt with, receiver's public key
-def personal_encrypt(plain_text: str, public_key):
+def personal_encrypt(plain_text: str, public_key=None):
     return rsa.encrypt(plain_text.encode(), public_key)
 
 
@@ -38,11 +39,17 @@ def gen_key(data):
 
 class Security:
 
-    def __init__(self, publicKey, privateKey, passw) -> None:
-        self._public_key = publicKey
-        self._private_key = privateKey
+    def __init__(self, passw, publicKey=None, privateKey=None) -> None:
+
         self.password = passw
-        self._app_key = gen_key(passw)
+
+        if publicKey is None or privateKey is None:
+            self.generate_keys()
+        else:
+            self._public_key = publicKey
+            self._private_key = privateKey
+            # self.password = passw
+            # self._app_key = gen_key(passw)
 
     def personal_decrypt(self, crypt_text):
         return rsa.decrypt(crypt_text, self._private_key).decode()
@@ -60,10 +67,10 @@ class Security:
         return decrypted_data.decode()
 
     def get_private_key(self) -> str:
-        return self._public_key
+        return self.public_key
 
     def generate_keys(self):
-        self._public_key, self._private_key = rsa.newkeys(2048)
+        self.public_key, self._private_key = rsa.newkeys(2048)
         self._app_key = gen_key(self.password)
 
     '''
@@ -74,13 +81,17 @@ class Security:
             - password pickup
     '''
 
-    @property
-    def public_key(self):
-        return self._public_key
+    # @property
+    # def public_key(self):
+    #     return self.public_key
 
 
 if __name__ == '__main__':
-    obj = Security()
+    print(gen_key('K!!L$Y'))
+    # obj = Security()
+    # obj.password = 'super_usrre'
+    # obj.generate_keys()
+    # print(obj.public_key)
     # obj.password = 'Akash_password_mnChar'
     # print(hash_str('Akash_password_mnChar'))
     # print(hash_str('Himanshu_password_Otakuu'))
@@ -89,4 +100,4 @@ if __name__ == '__main__':
 
     # obj.fetch_keys()
     # print(obj._private_key)
-    # print(obj._public_key)
+    # print(obj.public_key)

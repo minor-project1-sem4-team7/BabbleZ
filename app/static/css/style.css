@@ -760,6 +760,7 @@ div[class~="onTop"] > .count {
 	background: linear-gradient(to top,rgb(19, 19, 19),rgb(80, 80, 80));
 }
 
+
 .replyBar .attach {
 	width: 70px;
 	height: 70px;
@@ -785,6 +786,7 @@ div[class~="onTop"] > .count {
 	height: 70px;
 	padding: 0px 8px;
 	font-size: 16px;
+	color:white;
 }
 
 .replyBar .otherTools {
@@ -978,13 +980,3 @@ div[class~="onTop"] > .count {
 		width: calc(220px - 20px);
 	}
 }
-
-div.scroll {
-        background-color: #fed9ff;
-        width: 600px;
-        height: 150px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        text-align: center;
-        padding: 20px;
-      }
