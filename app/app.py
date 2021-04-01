@@ -26,6 +26,7 @@ def html_page(page_name):
 
                 try:
                     usr = login_user(loginid, loginpassword)
+                    usr.initiate_user_working()
                     return render_template("ui_chat.html")
 
                 except:

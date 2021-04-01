@@ -1,7 +1,5 @@
 import threading
 import socket
-import pickle
-from server_security import Security
 
 
 def log(typ: str, text: str):
@@ -26,7 +24,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(('0.0.0.0', 27526))
 server.listen()
 
-userlist = []
+users = []
 
 
 def handler():

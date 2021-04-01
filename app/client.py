@@ -6,10 +6,11 @@ import user
 import sys
 import pickle
 import mongo_dao
-import  logging
+import logging
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
+
 
 def log(typ: str, text: str):
     '''
@@ -70,7 +71,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             else:
                 raise str("user not found")
 
-        if len(username) <= 0 :
+        if len(username) <= 0:
             loading_user_data()
             # pswd = passwd
             keys = self.get_myKeys(user_id)
@@ -87,20 +88,21 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             log('!', f'Server IP {self.ip}')
             log('!', f'Server PORT {self.port}')
 
-            self.connect()
-
-            recieve_thread = threading.Thread(target= self.recieve_messg())
-            recieve_thread.start()
-
 
 
         else:
             try:
-                Security.Security.__init__(self,passwd)
+                Security.Security.__init__(self, passwd)
                 store_user_data()
                 self.success = True
             except:
                 self.success = False
+
+    def initiate_user_working(self):
+        self.connect()
+
+        recieve_thread = threading.Thread(target=self.recieve_messg())
+        recieve_thread.start()
 
     # connecting to server
     def connect(self):
@@ -153,7 +155,6 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             except:
                 print('Can not connect')
 
-
     def save_messg(self):
         pass
 
@@ -165,6 +166,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
 
 if __name__ == '__main__':
+
     bab = Babble('superuser_Arnav', 'K!!L$Y')
     # bab.connect()
     # bab.send_messg('Hello Whats app', 'Abcd')

@@ -107,40 +107,30 @@ class MongoDAO:
             return False
 
     def get_user_password(self, user_id):
-        return self.get_one("Profile","user_id",user_id)["password"]
-
+        return self.get_one("Profile", "user_id", user_id)["password"]
 
 
 if __name__ == '__main__':
 
-    db = MongoDAO()
-    # js_obj = {"user_id": "userid",
-    #           "username": 'username',
-    #           "password": 'password',
-    #           "public_key": 'public_key',
-    #           "private_key": '_private_key',
-    #           "about": 'not_set_yet',
-    #           "display_profile": 'user_dp'
-    #           }
-    # db.insert('Profile', js_obj)
-    dt = db.get_one('Profile','user_id','superuser_Arnav')
+    lis = ["606481a645bfe65d56bfbba9", "6061462fe1f16e15c1b22760", "606146fee1f16e15c1b22761",
+           "60614485e1f16e15c1b2275f", "606147f8e1f16e15c1b22762"]
 
-    print(dt["about"])
+    lis.sort()
+    for i in lis:
+        print(str(ObjectId(i).generation_time)[:-6])
 
 '''
-
 Database : BabbleZ
     Collection : Profile
     Collection : Friends
         
     Collection : user_id
-        friend_id : 
-        friend_public_key:
-        friend_username :
-        Messages:{
-            recieve:
-            sent:
+        {
+            "type": recieved/sent
+            "SHA" : ''
+            "size" ''
+            "payload" : ''
+            "integrity" : ''
+            "status" : ''
         }
-    
-
 '''
