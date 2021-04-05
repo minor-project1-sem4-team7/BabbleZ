@@ -1,4 +1,3 @@
-import threading
 import socket
 from datetime import datetime
 import Security
@@ -13,14 +12,14 @@ logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
 
 
 def log(typ: str, text: str):
-    '''
+    """
     [!] Information\n
     [#] Important or Warning\n
     [.] Process\n
     [-] Error\n
     [+] Success\n
     [N] Count
-    '''
+    """
 
     timestamp = datetime.now()
 
@@ -32,20 +31,26 @@ def log(typ: str, text: str):
 class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
     def __init__(self, user_id, passwd, username=''):
+
+        # Initiate Database
         mongo_dao.MongoDAO.__init__(self)
+
+        # Initiate User
         user.User.__init__(self)
+        # Set Default Login = False
         self.logged_in = False
 
+        # Generate and Store New User Information
         def store_user_data():
             self.user_id = user_id
             self.username = username
             self.password = Security.hash_str(passwd)
             self.user_dp = 'Not set'  # TEMP
-            # self.generate_keys()
+
             js_obj = {"user_id": user_id,
                       "username": username,
                       "password": self.password,
-                      "public_key": str(self.public_key),
+                      "public_key": str(self._public_key),
                       "private_key": str(self._private_key),
                       "about": 'not_set_yet',
                       "display_profile": self.user_dp
@@ -54,6 +59,7 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             print('Success')
             log('+', f'Signup Successful as {self.user_id}')
 
+        # Load Already Existed User Information
         def loading_user_data():
             if self.if_user_exist(user_id):
 
@@ -67,19 +73,30 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
                     self.user_dp = user_dict["display_profile"]
                 else:
                     raise str("Failed")
-
             else:
                 raise str("user not found")
 
+        # Check Request [Login/Signup]
         if len(username) <= 0:
+
+            # Handling Login Request
+
+            # Load Data Call
             loading_user_data()
-            # pswd = passwd
+
+            # Get Encryption Key Call
             keys = self.get_myKeys(user_id)
-            pub_Key = keys[0]
-            prv_key = keys[1]
-            Security.Security.__init__(self, passwd, pub_Key, prv_key)
+
+            # Initiate Security
+            Security.Security.__init__(self, passwd, keys)
+
+            # Set Password Again, Hashed Password
             self.password = self.get_one('Profile', 'user_id', self.user_id)["password"]
+
+            # Set Login Flag
             self.logged_in = True
+
+            # Socket Connection Started
             self.client = socket.socket()
             self.port = 27526
             self.ip = '127.0.0.1'
@@ -88,21 +105,19 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             log('!', f'Server IP {self.ip}')
             log('!', f'Server PORT {self.port}')
 
-
-
+            # Initiate Connection To Server
+            self.connect()
         else:
             try:
+
+                # Handling Signup Request
+
+                # Initiate Security Generation
                 Security.Security.__init__(self, passwd)
                 store_user_data()
                 self.success = True
             except:
-                self.success = False
-
-    def initiate_user_working(self):
-        self.connect()
-
-        recieve_thread = threading.Thread(target=self.recieve_messg())
-        recieve_thread.start()
+                self.success = True
 
     # connecting to server
     def connect(self):
@@ -131,8 +146,9 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
     # send message method
     def send_messg(self, message, receiver_id):
         if self.is_connected:
+
             drop = list()
-            pubkey = self.get_public_key(receiver_id)
+            pubkey = self.get_public_key(receiver_id)  # INCOMPLETE
             drop.append(Security.personal_encrypt(message, pubkey))
 
             metadata = list()
@@ -145,18 +161,29 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
             packet = pickle.dumps(drop)
             print(packet)
 
-    def recieve_messg(self):
+    def extract_payload(self, packet):
+        drop = pickle.loads(packet)
+        payload = drop[0]
+        meta = drop[1]
 
-        while True:
-            try:
-                message = self.client.recv(1024)
-                print(message)
+        payload = self.personal_decrypt(payload)
+        metadata = list()
+        for values in meta:
+            metadata.append(self.app_decrypt(values))
 
-            except:
-                print('Can not connect')
+        obj_id = self.imprint_message('received', metadata, payload)
+        log('+',f' Received Document Created {obj_id}')
 
-    def save_messg(self):
-        pass
+        print(payload)
+        print(metadata)
+
+    def received_message(self):
+        try:
+            message = self.client.recv(1024)
+            if len(message):
+                self.extract_payload(message)
+        except Exception as e:
+            print(e, '\nCan not connect')
 
     def status_report(self, userid):
 
@@ -167,6 +194,17 @@ class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
 
 if __name__ == '__main__':
 
+    # Testing Program
     bab = Babble('superuser_Arnav', 'K!!L$Y')
-    # bab.connect()
-    # bab.send_messg('Hello Whats app', 'Abcd')
+
+    import threading
+
+
+    def receive():
+        while True:
+            bab.received_message()
+
+
+    thread = threading.Thread(target=receive)
+    thread.start()
+

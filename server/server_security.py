@@ -1,27 +1,64 @@
 import rsa
 import base64
+from hashlib import sha256
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import hashlib
+
+
+def salt_key(data):
+    new_pass = data[:1] + '@4fsf4f' + \
+               data[1:len(data) - 3] + '%5ssg' + data[len(data) - 3:]
+    return new_pass
+
+
+def app_encrypt(data, app_key):
+    data = data.encode()
+    func = Fernet(app_key)
+    encrypted_data = func.encrypt(data)
+    return encrypted_data
+
+
+def hash_str(string: str):
+    string = salt_key(string)
+    return hashlib.sha512(string.encode()).hexdigest()
+
+
+# Encrypt with, receiver's public key
+def personal_encrypt(plain_text: str, public_key=None):
+    return rsa.encrypt(plain_text.encode(), public_key)
+
+
+def gen_key(data):
+    data = salt_key(data)
+    data = data.encode()
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=b'@0#5T13dgrgjjss9e23sTh',
+        iterations=100000,
+        backend=default_backend()
+    )
+    return base64.urlsafe_b64encode(kdf.derive(data))
 
 
 class Security:
 
-    def __init__(self) -> None:
-        self._public_key = None
-        self._private_key = None
-        self.sender_key = None
-        self._app_key = None
-        self.key_status = False
-        self.password = 'Hello_wwrsfaffasfrrssvg h7'            # test password variable REMAINING
+    def __init__(self, passw, publicKey=None, privateKey=None) -> None:
 
-        self.fetch_keys()
+        self.password = passw
 
-    def private_encrypt(self, plain_text: str):
-        return rsa.encrypt(plain_text.encode(), self._private_key)
+        if publicKey is None or privateKey is None:
+            self.generate_keys()
+        else:
+            self._public_key = publicKey
+            self._private_key = privateKey
+            # self.password = passw
+            # self._app_key = gen_key(passw)
 
-    def private_decrypt(self, crypt_text):
+    def personal_decrypt(self, crypt_text):
         return rsa.decrypt(crypt_text, self._private_key).decode()
 
     def app_encrypt(self, data):
@@ -37,40 +74,37 @@ class Security:
         return decrypted_data.decode()
 
     def get_private_key(self) -> str:
-        return self._public_key
+        return self.public_key
 
-    def fetch_keys(self):
-        def salt_key(data):
-            new_pass = data[:1] + '@4fsf4f' + \
-                       data[1:len(data) - 3] + '%5ssg' + data[len(data) - 3:]
-            return new_pass
+    def generate_keys(self):
+        self.public_key, self._private_key = rsa.newkeys(2048)
+        self._app_key = gen_key(self.password)
 
-        def gen_key(data):
-            data = salt_key(data)
-            data = data.encode()
-            kdf = PBKDF2HMAC(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=b'@0#5T13dgrgjjss9e23sTh',
-                iterations=100000,
-                backend=default_backend()
-            )
+    '''
+        REMAINING :
+            - SQL sync
+            - First time cryptography
+            - Key pickup form DB
+            - password pickup
+    '''
 
-            return base64.urlsafe_b64encode(kdf.derive(data))
-
-        def generate_keys(password) -> None:
-            self._public_key, self._private_key = rsa.newkeys(2048)
-            self._app_key = gen_key(password)       # generate REMAINING
-
-        # get database keys or generate keys
-        generate_keys(self.password)
-        # get local keys function REMAINING
+    # @property
+    # def public_key(self):
+    #     return self.public_key
 
 
-        '''
-            REMAINING :
-                - SQL sync
-                - First time cryptography
-                - Key pickup form DB
-                - password pickup
-        '''
+if __name__ == '__main__':
+    print(gen_key('K!!L$Y'))
+    # obj = Security()
+    # obj.password = 'super_usrre'
+    # obj.generate_keys()
+    # print(obj.public_key)
+    # obj.password = 'Akash_password_mnChar'
+    # print(hash_str('Akash_password_mnChar'))
+    # print(hash_str('Himanshu_password_Otakuu'))
+    # print(hash_str('Amarnath_password_arch'))
+    # print(hash_str('Swati_password_Swati-P11'))
+
+    # obj.fetch_keys()
+    # print(obj._private_key)
+    # print(obj.public_key)
