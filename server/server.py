@@ -96,10 +96,10 @@ if __name__ == '__main__':
 
     print('Starting The Server...')
     log('!', 'Starting Server')
-    new_connection()
+    new_connection ()
 
     # send_thread = threading.Thread(target= send_to_client())
-    # send_thread.start()
+    # send_thread.start ()
 
     '''
     payload:
