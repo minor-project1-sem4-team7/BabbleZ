@@ -1,6 +1,11 @@
 import socket
 import select
 import logging
+import rsa
+import server_security
+import threading
+import pickle
+from mongo_dao import MongoDAO
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
@@ -23,9 +28,10 @@ def log(typ: str, text: str):
         file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
 
 
+
 HEADER_LENGTH = 10
 
-IP = "192.168.56.1"
+IP = "0.0.0.0"
 PORT = 27526
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,10 +55,11 @@ def receive_message(client_socket):
             return False
 
         message_length = int(message_header.decode('utf-8').strip())
-
+        log('+', 'Message Recieved !')
         return {'header': message_header, 'data': client_socket.recv(message_length)}
 
     except:
+        log('-', 'Failed To Recieve!!!')
         return False
 
 
@@ -69,8 +76,7 @@ while True:
             sockets_list.append(client_socket)
             clients[client_socket] = user
             clients[client_socket] = user
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address,
-                                                                            user['data'].decode('utf-8')))
+            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
         else:
             message = receive_message(notified_socket)
 
@@ -91,3 +97,15 @@ while True:
     for notified_socket in exception_sockets:
         sockets_list.remove(notified_socket)
         del clients[notified_socket]
+
+def send_to_client():
+    while True:
+        clientsocket, address = server_socket.accept()
+        print(f"Connection from {address} has been established.")
+
+        drop = list()
+        msg = pickle.dumps(drop)
+        msg = bytes(f"{len(msg):<{HEADER_LENGTH}}", 'utf-8')+msg
+        print(msg)
+        clientsocket.send(msg)
+        log('+', 'Message send to client !')
