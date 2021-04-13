@@ -1,12 +1,34 @@
 import socket
 import select
+import logging
+
+logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
+                    format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
+
+def log(typ: str, text: str):
+    '''
+    [!] Information\n
+    [#] Important or Warning\n
+    [.] Process\n
+    [-] Error\n
+    [+] Success\n
+    [N] Count
+    '''
+
+    from datetime import datetime
+    timestamp = datetime.now()
+
+    typ = '[' + typ + ']'
+    with open('logfile.txt', 'a') as file:
+        file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
+
 
 HEADER_LENGTH = 10
 
-IP = "127.0.0.1"
-PORT = 5000
+IP = "192.168.56.1"
+PORT = 27526
 
-server_socket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 server_socket.bind((IP, PORT))
@@ -17,6 +39,7 @@ sockets_list = [server_socket]
 
 clients = {}
 print(f'Listening for connections on {IP}:{PORT}...')
+
 
 def receive_message(client_socket):
     try:
@@ -32,6 +55,7 @@ def receive_message(client_socket):
     except:
         return False
 
+
 while True:
     read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
 
@@ -40,12 +64,13 @@ while True:
             client_socket, client_address = server_socket.accept()
             user = receive_message(client_socket)
             if user is False:
-                continue    
+                continue
 
             sockets_list.append(client_socket)
             clients[client_socket] = user
             clients[client_socket] = user
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
+            print('Accepted new connection from {}:{}, username: {}'.format(*client_address,
+                                                                            user['data'].decode('utf-8')))
         else:
             message = receive_message(notified_socket)
 
@@ -63,12 +88,6 @@ while True:
                 if client_socket != notified_socket:
                     client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
 
-    
     for notified_socket in exception_sockets:
-
         sockets_list.remove(notified_socket)
         del clients[notified_socket]
-
-            
-
-
