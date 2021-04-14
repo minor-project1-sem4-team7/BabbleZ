@@ -1,0 +1,15 @@
+LINUX:
+
+GLIBC_2.29 not found on ubuntu 18.04
+Solution :
+    RUN -   sudo add-apt-repository -r ppa:webkit-team/ppa
+            sudo apt update
+            sudo apt install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
+            sudo apt install -y g++ libgtk-3-dev libfreetype6-dev libx11-dev libxinerama-dev libxrandr-dev libxcursor-dev mesa-common-dev libasound2-dev freeglut3-dev libxcomposite-dev libcurl4-openssl-dev
+    LINK:
+        https://forum.juce.com/t/solved-glibc-2-29-not-found-on-ubuntu-18-04/34960
+
+INSTALL pip
+INSTALL Flask
+INSTALL rsa
+INSTALL pymongo

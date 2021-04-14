@@ -110,7 +110,6 @@ def send_to_client(packet):
         clientsocket.send(msg)
         log('+', 'Message send to client !')
 
-
 def handler (msg_head):
 
     decrypt=Security ()
@@ -169,9 +168,3 @@ Incoming / Sending Packet Structure:
         size
         msg_id
 '''
-
-    
-
-
-
-

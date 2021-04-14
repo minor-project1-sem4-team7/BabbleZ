@@ -154,3 +154,4 @@ Database/
 backup/
 logfile.txt
 app_log.txt
+ServerBinary/

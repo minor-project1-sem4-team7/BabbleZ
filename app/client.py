@@ -28,7 +28,7 @@ def log(typ: str, text: str):
         file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
 
 
-class Babble(mongo_dao.MongoDAO, user.User, Security.Security):
+class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
     def __init__(self, user_id, passwd, username=''):
 
