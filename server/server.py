@@ -6,6 +6,8 @@ import pickle
 import rsa
 
 
+
+
 def log(typ: str, text: str):
     '''
     [!] Information\n
@@ -48,8 +50,7 @@ def send_to_client():
 
     drop = list()
     drop.append(server_security.personal_encrypt(payload, public_key))
-    metadata = [server_security.app_encrypt(user_id, app_key), server_security.app_encrypt(size, app_key),
-                server_security.app_encrypt(msg_id, app_key)]
+    metadata = [server_security.app_encrypt(user_id, app_key), server_security.app_encrypt(size, app_key), server_security.app_encrypt(msg_id, app_key)]
     drop.append(metadata)
 
     # packet = str(drop)

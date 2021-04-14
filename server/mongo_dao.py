@@ -76,7 +76,7 @@ class MongoDAO:
 
     # Get Public Key Local DB
     def get_publicKey(self, user_id):
-        return self.get_one('Friends', 'user_id', user_id)["public_key"]
+        return self.get_one('Profiles', 'user_id', user_id)["public_key"]
 
     # Get My Private Key
     def get_myKeys(self, user_id):

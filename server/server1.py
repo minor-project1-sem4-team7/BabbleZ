@@ -2,7 +2,7 @@ import socket
 import select
 import logging
 import rsa
-import server_security
+from security import Security
 import threading
 import pickle
 from mongo_dao import MongoDAO
@@ -98,7 +98,7 @@ while True:
         sockets_list.remove(notified_socket)
         del clients[notified_socket]
 
-def send_to_client():
+def send_to_client(packet):
     while True:
         clientsocket, address = server_socket.accept()
         print(f"Connection from {address} has been established.")
@@ -109,3 +109,62 @@ def send_to_client():
         print(msg)
         clientsocket.send(msg)
         log('+', 'Message send to client !')
+
+def handler (msg_head):
+
+    decrypt=Security ()
+    handle = MongoDAO ()
+    rec_packet=pickle.loads (msg_head)
+    metadata=decrypt.app_decrypt (rec_packet[1])
+
+    if rec_packet[2]=='key':
+        pub_key=handle.get_publicKey (metadata[1][0])
+        li=[pub_key, 'key']
+        send_to_client (pickle.dump (li))
+
+    elif rec_packet[2]=='msg':
+        active=False
+        json={"drop":msg_head, "status":"Not delivered"}
+        handle.insert (metadata[1][0], json)
+
+        if active:
+            send_to_client (msg_head)
+
+    elif rec_packet[2]=='signup':
+        exist=False
+        exist=handle.if_user_exist (metadeta[1][0])
+        if exist:
+            unique=["User ID is Unique"]
+            send_to_client (pickle.dump (unique))
+        else:
+            Error=unique=["User ID already exists - ERROR"]
+            send_to_client (pickle.dump (Error))
+
+
+
+        
+'''
+---------------------------
+Stored Database Structure:
+---------------------------
+Database : BabbleZ
+    Collection : Profile
+    Collection : Friends
+        
+    Collection : user_id
+        {
+            "type": received/sent
+            "date": ''
+            "size" ''
+            "payload" : ''
+            "status" : ''
+        }
+---------------------------------------        
+Incoming / Sending Packet Structure:   
+---------------------------------------     
+    payload:
+    metadata:
+        user_id
+        size
+        msg_id
+'''
