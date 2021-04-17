@@ -1,0 +1,4 @@
+[+] 2021-04-13 11:24:07.483194 Logged In Successfully as superuser_Arnav
+[!] 2021-04-13 11:24:07.593800 Server IP 192.168.56.1
+[!] 2021-04-13 11:24:07.593909 Server PORT 27526
+[+] 2021-04-13 11:24:07.594013 Connection made successfully to server

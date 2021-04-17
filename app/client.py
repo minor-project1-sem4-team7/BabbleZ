@@ -99,7 +99,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             # Socket Connection Started
             self.client = socket.socket()
             self.port = 27526
-            self.ip = '127.0.0.1'
+            self.ip = '192.168.56.1'
             self.is_connected = False
 
             log('!', f'Server IP {self.ip}')

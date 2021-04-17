@@ -14,11 +14,11 @@ insert  - insert document into collection
 
 class MongoDAO:
 
-    def __init__(self):
+    def __init__(self, db = 'BabbleZ'):
 
         self.host = 'localhost'
         self.port = '27017'
-        self.database = 'BabbleZ'
+        self.database = db
 
         self.db_client = MongoClient(f'mongodb://{self.host}:{self.port}')
 

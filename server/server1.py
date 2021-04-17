@@ -2,13 +2,14 @@ import socket
 import select
 import logging
 import rsa
-from security import Security
+from Security import Security
 import threading
 import pickle
 from mongo_dao import MongoDAO
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
+
 
 def log(typ: str, text: str):
     '''
@@ -26,7 +27,6 @@ def log(typ: str, text: str):
     typ = '[' + typ + ']'
     with open('logfile.txt', 'a') as file:
         file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
-
 
 
 HEADER_LENGTH = 10
@@ -63,86 +63,92 @@ def receive_message(client_socket):
         return False
 
 
-while True:
-    read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
-
-    for notified_socket in read_sockets:
-        if notified_socket == server_socket:
-            client_socket, client_address = server_socket.accept()
-            user = receive_message(client_socket)
-            if user is False:
-                continue
-
-            sockets_list.append(client_socket)
-            clients[client_socket] = user
-            clients[client_socket] = user
-            print('Accepted new connection from {}:{}, username: {}'.format(*client_address, user['data'].decode('utf-8')))
-        else:
-            message = receive_message(notified_socket)
-
-            if message is False:
-                print('Closed connection from: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
-                sockets_list.remove(notified_socket)
-                del clients[notified_socket]
-
-                continue
-
-            user = clients[notified_socket]
-            print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
-
-            for client_socket in clients:
-                if client_socket != notified_socket:
-                    client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
-
-    for notified_socket in exception_sockets:
-        sockets_list.remove(notified_socket)
-        del clients[notified_socket]
-
-def send_to_client(packet):
+def send_to_client():
     while True:
         clientsocket, address = server_socket.accept()
         print(f"Connection from {address} has been established.")
 
         drop = list()
         msg = pickle.dumps(drop)
-        msg = bytes(f"{len(msg):<{HEADER_LENGTH}}", 'utf-8')+msg
+        msg = bytes(f"{len(msg):<{HEADER_LENGTH}}", 'utf-8') + msg
         print(msg)
         clientsocket.send(msg)
         log('+', 'Message send to client !')
 
-def handler (msg_head):
 
-    decrypt=Security ()
-    handle = MongoDAO ()
-    rec_packet=pickle.loads (msg_head)
-    metadata=decrypt.app_decrypt (rec_packet[1])
+def send_to_client(packet):
+    while True:
+        clientsocket, address = server_socket.accept()
+        print(f"Connection from {address} has been established.")
 
-    if rec_packet[2]=='key':
-        pub_key=handle.get_publicKey (metadata[1][0])
-        li=[pub_key, 'key']
-        send_to_client (pickle.dump (li))
 
-    elif rec_packet[2]=='msg':
-        active=False
-        json={"drop":msg_head, "status":"Not delivered"}
-        handle.insert (metadata[1][0], json)
+def handler(msg_head):
+    decrypt = Security()
+    handle = MongoDAO()
+    rec_packet = pickle.loads(msg_head)
+    metadata = decrypt.app_decrypt(rec_packet[1])
+
+    if rec_packet[2] == 'key':
+        pub_key = handle.get_publicKey(metadata[1][0])
+        li = [pub_key, 'key']
+        send_to_client(pickle.dump(li))
+
+    elif rec_packet[2] == 'msg':
+        active = False
+        json = {"drop": msg_head, "status": "Not delivered"}
+        handle.insert(metadata[1][0], json)
 
         if active:
-            send_to_client (msg_head)
+            send_to_client(msg_head)
 
-    elif rec_packet[2]=='signup':
-        exist=False
-        exist=handle.if_user_exist (metadeta[1][0])
+    elif rec_packet[2] == 'signup':
+        exist = False
+        exist = handle.if_user_exist(metadata[1][0])
         if exist:
-            unique=["User ID is Unique"]
-            send_to_client (pickle.dump (unique))
+            unique = ["User ID is Unique"]
+            send_to_client(pickle.dump(unique))
         else:
-            Error=unique=["User ID already exists - ERROR"]
-            send_to_client (pickle.dump (Error))
+            Error = unique = ["User ID already exists - ERROR"]
+            send_to_client(pickle.dump(Error))
 
 
+if __name__ == '__main__':
+    while True:
+        read_sockets, _, exception_sockets = select.select(sockets_list, [], sockets_list)
 
-        
+        for notified_socket in read_sockets:
+            if notified_socket == server_socket:
+                client_socket, client_address = server_socket.accept()
+                user = receive_message(client_socket)
+                if user is False:
+                    continue
+
+                sockets_list.append(client_socket)
+                clients[client_socket] = user
+                clients[client_socket] = user
+                print('Accepted new connection from {}:{}, username: {}'.format(*client_address,
+                                                                                user['data'].decode('utf-8')))
+            else:
+                message = receive_message(notified_socket)
+
+                if message is False:
+                    print('Closed connection from: {}'.format(clients[notified_socket]['data'].decode('utf-8')))
+                    sockets_list.remove(notified_socket)
+                    del clients[notified_socket]
+
+                    continue
+
+                user = clients[notified_socket]
+                print(f'Received message from {user["data"].decode("utf-8")}: {message["data"].decode("utf-8")}')
+
+                for client_socket in clients:
+                    if client_socket != notified_socket:
+                        client_socket.send(user['header'] + user['data'] + message['header'] + message['data'])
+
+        for notified_socket in exception_sockets:
+            sockets_list.remove(notified_socket)
+            del clients[notified_socket]
+
 '''
 ---------------------------
 Stored Database Structure:
