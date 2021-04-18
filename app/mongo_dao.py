@@ -34,6 +34,11 @@ class MongoDAO:
     def update(self, collection, _id, dic):
         self.db_client[self.database][collection].update_one({'_id': ObjectId(_id)}, {"$set": dic}, upsert=True)
 
+    # Update by field
+    def update_by(self, collection, attribute, value, dic):
+        self.db_client[self.database][collection].update_one({attribute: value}, {"$set": dic}, upsert=True)
+
+
     # Get all
     def get_all(self, collection, filter_field, filter_value):
         final_results = []
@@ -158,4 +163,6 @@ Incoming / Sending Packet Structure:
         user_id
         size
         msg_id
+
+
 '''

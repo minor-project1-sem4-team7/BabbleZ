@@ -14,11 +14,11 @@ insert  - insert document into collection
 
 class MongoDAO:
 
-    def __init__(self):
+    def __init__(self, db='BabbleZ'):
 
         self.host = 'localhost'
         self.port = '27017'
-        self.database = 'BabbleZ'
+        self.database = db
 
         self.db_client = MongoClient(f'mongodb://{self.host}:{self.port}')
 
@@ -33,6 +33,10 @@ class MongoDAO:
     # Update
     def update(self, collection, _id, dic):
         self.db_client[self.database][collection].update_one({'_id': ObjectId(_id)}, {"$set": dic}, upsert=True)
+
+    # Update by field
+    def update_by(self, collection, attribute, value, dic):
+        self.db_client[self.database][collection].update_one({attribute: value}, {"$set": dic}, upsert=True)
 
     # Get all
     def get_all(self, collection, filter_field, filter_value):
@@ -76,7 +80,7 @@ class MongoDAO:
 
     # Get Public Key Local DB
     def get_publicKey(self, user_id):
-        return self.get_one('Profiles', 'user_id', user_id)["public_key"]
+        return self.get_one('Friends', 'user_id', user_id)["public_key"]
 
     # Get My Private Key
     def get_myKeys(self, user_id):
@@ -141,7 +145,7 @@ Stored Database Structure:
 Database : BabbleZ
     Collection : Profile
     Collection : Friends
-        
+
     Collection : user_id
         {
             "type": received/sent
@@ -158,4 +162,6 @@ Incoming / Sending Packet Structure:
         user_id
         size
         msg_id
+
+
 '''
