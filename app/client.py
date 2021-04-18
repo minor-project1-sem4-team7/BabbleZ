@@ -33,7 +33,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
     def __init__(self, user_id, passwd, username=''):
 
         # Initiate Database
-        mongo_dao.MongoDAO.__init__(self)
+        mongo_dao.MongoDAO.__init__(self, user_id)
 
         # Initiate User
         user.User.__init__(self)
@@ -107,6 +107,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
             # Initiate Connection To Server
             self.connect()
+            # Login packet
         else:
             try:
 

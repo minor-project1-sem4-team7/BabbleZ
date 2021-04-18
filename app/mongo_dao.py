@@ -143,7 +143,7 @@ if __name__ == '__main__':
 ---------------------------
 Stored Database Structure:
 ---------------------------
-Database : BabbleZ
+Database : BabbleZ      _ userid
     Collection : Profile
     Collection : Friends
         
