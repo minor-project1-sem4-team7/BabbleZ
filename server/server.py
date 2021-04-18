@@ -1,6 +1,8 @@
 import threading
 import socket
 import sys
+import time
+
 import mongo_dao
 import rsa
 import pickle
@@ -37,6 +39,13 @@ rcd = {
     "-97": 'Update Error',
 }
 
+
+# Convert String to Public Key
+def get_key(key: str) -> rsa.PublicKey:
+    key = key[10:-1]
+    key_numeric = [i for i in map(int, key.split(','))]
+    return rsa.PublicKey(key_numeric[0], key_numeric[1])
+
 # configuration
 BUFFER_SIZE = 1024
 IP = '0.0.0.0'
@@ -68,16 +77,18 @@ active_clients = list()
 # Log out Error Packet
 error_logout_packet = pickle.dumps([rsa.encrypt('Logging Out , Facing error with your Account, Try to Re Signin'.encode(), __client_initial_public_key__), rsa.encrypt('errorlogout'.encode(),__client_initial_public_key__)])
 
+
 # return codes Packet
 def rcd_packet(code : int):
 
     if code == -100:
-        pass
+        typ = rsa.encrypt('IDS_Warning'.encode(), __client_initial_public_key__)
     else:
-        typ = rsa.encrypt('Exception'.encode(), __client_initial_public_key__)
-        er = rsa.encrypt(rcd[str(code)].encode(), __client_initial_public_key__)
+        typ = rsa.encrypt('exception'.encode(), __client_initial_public_key__)
 
-    
+    er = rsa.encrypt(rcd[str(code)].encode(), __client_initial_public_key__)
+    return pickle.dumps([typ,er])
+
 
 # Per client Handler Class
 class Handler:
@@ -87,7 +98,8 @@ class Handler:
         _srv_db.update_by('Profiles', 'user_id', userid, {"public_key":publickey})
         self.user_id = userid
         self.password = password
-        self.public_key = publickey
+        self.str_publickey = publickey
+        self.public_key = get_key(publickey)
         self.user_socket = sock
         self.user_address = adrs
         self.status = True
@@ -95,21 +107,34 @@ class Handler:
         self.secure = Security.Security()
 
     # pickle packet Creator
-    def manifest_packet(self, drop: list) -> bytes:
-        pass
+    def manifest_packet(self, payload, rcvd_metadata) -> bytes:
 
-    def send_msg(self, client : socket.socket, packet : bytes):
+        drop = list()
+        drop.append(payload)
+        info = [self.user_id, rcvd_metadata[1], rcvd_metadata[2]]
+        metadata = list()
+        for value in info:
+            metadata.append(rsa.encrypt(value.encode(), self.public_key))
+
+        drop.append(metadata)
+        drop.append(rsa.encrypt('msg'.encode(), self.public_key))
+
+        return pickle.dumps(drop)
+
+    def send_msg(self, client : socket.socket, packet: bytes):
+
         try:
             client.send(packet)
         except:
-            log('-',f'Error Sending Message with client {self.user_address}, Logout {self.user_id}')
+            log('-',f'Error Sending Message with client {self.user_id}, Address {self.user_address} ')
             try:
                 client.send(error_logout_packet)
             except:
                 del self
             del self
 
-    def receive_msg(self):
+    # Client Received Message Handler
+    def receive_msg_handler(self):
 
         packet = self.user_socket.recv(BUFFER_SIZE)
 
@@ -120,10 +145,35 @@ class Handler:
 
             pkt_type = rsa.decrypt(packet[-1], __server_private_key__).decode()
 
+            # Handling Incoming Packet
             if pkt_type == 'msg':
-                pass
+
+
+                payload = packet[0]
+                rcvd_metadata = list()
+                for values in packet[1]:
+                    rcvd_metadata.append(rsa.decrypt(values,__server_private_key__).decode())
+
+                rcvr_handler = next((x for x in active_clients if x.user_id == rcvd_metadata[0]), None)      # DEBUG
+
+                # Creating Forward Packet
+                packet = self.manifest_packet(payload, rcvd_metadata)
+
+                if not rcvr_handler:
+                    pass
+                else:
+                    self.send_msg(rcvr_handler.user_socket,packet)
+
+            # Handling Status update packet
             elif pkt_type == 'status':
-                pass
+
+                def update_status():
+                    self.status = True
+                    time.sleep(60)
+                    self.status = False
+
+                status_thread = threading.Thread(target=update_status)
+                status_thread.start()
 
             # Password Change Request Handler
             elif pkt_type == 'passwd':
@@ -136,15 +186,17 @@ class Handler:
 
                         return 0
                     except:
-                        return -97
+                        self.send_msg(self.user_socket,rcd_packet(-97))
                 else:
-                    return -100
+                    self.send_msg(self.user_socket,rcd_packet(-100))
             else:
-                return -100
+                self.send_msg(self.user_socket,rcd_packet(-100))
 
     def initiate_user(self):
-        recv_thread = threading.Thread(target= self.receive_msg)
-        recv_thread.start()
+        while True:
+            self.receive_msg_handler()
+        # recv_thread = threading.Thread(target= self.receive_msg_handler)
+        # recv_thread.start()
 
 
 # Message type Handler  (packet received, socket object, address of client)

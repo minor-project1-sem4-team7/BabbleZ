@@ -163,6 +163,7 @@ Incoming / Sending Packet Structure:
         user_id
         size
         msg_id
+    type : msg
 
 
 '''
