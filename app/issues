@@ -16,3 +16,11 @@ INSTALL pymongo
 
 
 Firewall
+
+
+// Bugs
+
+Problem : Oversizing
+Solution : fragmentation + Header
+Status : Unsolved
+Areas: Socket ( send, receive) , encryption ( Encrypt, Decrypt) , Pickle ( loads, dumps)

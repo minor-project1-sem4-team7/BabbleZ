@@ -46,7 +46,7 @@ def get_key(key: str) -> rsa.PublicKey:
 
 
 # configuration
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 5210
 IP = '0.0.0.0'
 PORT = 27526
 
@@ -103,7 +103,6 @@ class Handler:
         self.user_address = adrs
         self.status = True
         self.database = mongo_dao.MongoDAO(userid)
-        self.secure = Security.Security()
 
     # pickle packet Creator
     def manifest_packet(self, payload, rcvd_metadata) -> bytes:
@@ -199,19 +198,19 @@ class Handler:
 
 
 # Message type Handler  (packet received, socket object, address of client)
-def msg_classifier(packet, sock = None, adrs = None):
+def msg_classifier(packet, sock : socket.socket = None, adrs = None):
 
     # Received Bytes to list
-    packet = pickle.loads(packet)
+    drop = pickle.loads(packet)
     # Packet type
-    pkt_typ = rsa.decrypt(packet[-1], __server_private_key__).decode()
+    pkt_typ = rsa.decrypt(drop[-1], __server_private_key__).decode()
 
     # Login Request Handler
     if pkt_typ == 'login':
 
-        password = rsa.decrypt(packet[0], __server_private_key__).decode()
-        userid = rsa.decrypt(packet[1], __server_private_key__).decode()
-        publickey = rsa.decrypt(packet[2], __server_private_key__).decode()
+        password = rsa.decrypt(drop[0], __server_private_key__).decode()
+        userid = rsa.decrypt(drop[1], __server_private_key__).decode()
+        publickey = rsa.decrypt(drop[2], __server_private_key__).decode()
 
         if password == _srv_db.get_user_password(userid):
             if sock and adrs:
@@ -222,15 +221,15 @@ def msg_classifier(packet, sock = None, adrs = None):
                 client_thread = threading.Thread(target=client.initiate_user)
                 client_thread.start()
             else:
-                return -100
+                sock.send(rcd_packet(-100))
         else:
-            return -99
+            sock.send(rcd_packet(-99))
 
     # Signup Request Handler
     elif pkt_typ == 'signup':
 
         try:
-            metadata = rsa.decrypt(packet[1], __server_private_key__).decode()
+            metadata = rsa.decrypt(drop[1], __server_private_key__).decode()
             js_obj = {
                 "user_id": metadata[0],
                 "password": metadata[1],
@@ -240,27 +239,48 @@ def msg_classifier(packet, sock = None, adrs = None):
 
             _srv_db.insert('Profiles', js_obj)
         except:
-            return -98
+            sock.send(rcd_packet(-98))
 
     # Public Key Fetch Request Handler
     elif pkt_typ == 'publickey':
-        user_id = rsa.decrypt(packet[0], __server_private_key__).decode()
+        user_id = rsa.decrypt(drop[0], __server_private_key__).decode()
         if user_id == '#0000':
-            return __server_public_key__
+            sock.send(rsa.encrypt(__server_public_key__.encode(),__client_initial_public_key__))
         else:
-            return -100
+            sock.send(rcd_packet(-100))
 
     # IDS condition, Invalid Request
     else:
-        return -100
+        sock.send(rcd_packet(-100))
 
 
 if __name__ == '__main__':
-    pub_key, priv = rsa.newkeys(4096)
 
-    print(pub_key)
-    print()
-    print()
-    print()
-    print()
-    print(priv)
+    def starting_server():
+
+        first_packet = b''
+        client_socket , client_address = server_socket.accept()
+        client_socket.send(f'Hello {client_address} You are connected'.encode())
+
+        pack = client_socket.recv(BUFFER_SIZE)
+        first_packet += pack
+        print(first_packet)
+        if first_packet:
+            msg_classifier(first_packet,client_socket, client_address)
+
+
+    while True:
+        server_thread = threading.Thread(target=starting_server())
+        try:
+            server_thread.start()
+        except:
+
+            log('#', 'Server Reset')
+            pass
+
+
+## IMPORTANT DATA LIMITER
+    # SEND
+    # Receive
+    # Encrypt
+    # Decrypt
