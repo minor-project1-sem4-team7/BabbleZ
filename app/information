@@ -1,0 +1,9 @@
+Packet Types    --> var : pkt_typ
+    1. msg
+        [0] : payload
+        [1] : metadata
+            [0] : user_id
+            [1] : size
+            [2] : msg_id
+        [2] : pkt_typ
+    2.

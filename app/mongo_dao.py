@@ -2,6 +2,7 @@
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from client import log
 
 """
 Use DAO to interface backend code with MongoDB
@@ -119,7 +120,10 @@ class MongoDAO:
                   "payload": payload
                   }
 
-        return self.insert(collection, js_obj)
+        obj_id = self.insert(collection, js_obj)
+        if obj_id:
+            log('+', f'Document Created {self.database}.{collection}.{obj_id}')
+        return js_obj
 
     # Reading from Database
     def read_scriptures(self, userid):

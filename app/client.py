@@ -1,4 +1,5 @@
 import socket
+import time
 from datetime import datetime
 import Security
 import user
@@ -99,7 +100,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             # Socket Connection Started
             self.client = socket.socket()
             self.port = 27526
-            self.ip = '192.168.56.1'
+            self.ip = '127.0.0.1'
             self.is_connected = False
 
             log('!', f'Server IP {self.ip}')
@@ -107,18 +108,31 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
             # Initiate Connection To Server
             self.connect()
-            # Login packet
+
+            # Send Login packet
+            self.login_request()
         else:
             try:
 
+                self.signup_success = False
                 # Handling Signup Request
+                self.connect()
 
                 # Initiate Security Generation
                 Security.Security.__init__(self, passwd)
-                store_user_data()
-                self.success = True
+
+                # Send Signup Packet
+                self.signup_request()
+
+                # Waiting Time
+                limit = 300
+                while not self.signup_success and limit:
+                    limit -= 1
+                    time.sleep(1)
+                if self.signup_success:
+                    store_user_data()
             except:
-                self.success = True
+                self.signup_success = False
 
     # connecting to server
     def connect(self):
@@ -141,56 +155,85 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
     # get public key of provided user id
     def get_public_key(self, recv_id):
-        if self.if_user_exist(recv_id):
+        if self.if_friend_exist(recv_id):
             return self.get_publicKey(recv_id)
+        else:
+            # returns the public key
+            rcv_public_key = self.search_user(recv_id)
+            if rcv_public_key:
+                return rcv_public_key
+            else:
+                raise Exception()
 
     # send message method
-    def send_messg(self, message, receiver_id):
+    def send_msg(self, message, receiver_id):
         if self.is_connected:
 
             drop = list()
-            pubkey = self.get_public_key(receiver_id)  # INCOMPLETE
-            drop.append(Security.personal_encrypt(message, pubkey))
+            try:
+                pubkey = self.get_public_key(receiver_id)  # INCOMPLETE
+                drop.append(Security.personal_encrypt(message, pubkey))
+                           # INCOMPLETE
 
-            metadata = list()
-            metadata.append(self.app_encrypt(receiver_id))
-            metadata.append(self.app_encrypt(self.user_id))
-            metadata.append(self.app_encrypt(str(datetime.now())))
-            metadata.append(self.app_encrypt(str(sys.getsizeof(drop[0]))))
+                metadata = list()
+                metadata.append(Security.personal_encrypt(receiver_id))
+                metadata.append(Security.personal_encrypt(self.user_id))
+                metadata.append(Security.personal_encrypt(str(datetime.now())))
+                metadata.append(Security.personal_encrypt(str(sys.getsizeof(drop[0]))))
 
-            drop.append(metadata)
-            packet = pickle.dumps(drop)
-            print(packet)
+                drop.append(metadata)
+                drop.append(Security.personal_encrypt('msg'))
+                packet = pickle.dumps(drop)
+            except:
+                log('-', 'Exception Raised while Sending message')
+                return -1
+
+            try:
+                self.client.send(packet)
+            except:
+                log('-', 'Exception Packet Transfer')
+                return -1
 
     def extract_payload(self, packet):
         drop = pickle.loads(packet)
-        payload = drop[0]
-        meta = drop[1]
 
-        payload = self.personal_decrypt(payload)
-        metadata = list()
-        for values in meta:
-            metadata.append(self.app_decrypt(values))
+        drop_type = self.personal_decrypt(drop[-1])
 
-        obj_id = self.imprint_message('received', metadata, payload)
-        log('+',f' Received Document Created {obj_id}')
+        if drop_type == 'msg':
 
-        print(payload)
-        print(metadata)
+            meta = drop[1]
+            payload = self.personal_decrypt(drop[0])
+            metadata = list()
+            for values in meta:
+                metadata.append(self.personal_decrypt(values))
+
+            return self.imprint_message('received', metadata, payload)
 
     def received_message(self):
         try:
             message = self.client.recv(1024)
             if len(message):
-                self.extract_payload(message)
+                return self.extract_payload(message)
         except Exception as e:
-            print(e, '\nCan not connect')
+            log('-',f'Exception {e}')
 
     def status_report(self, userid):
 
         packet = '{} {}'.format(userid, datetime.now()).encode()
         while True:
             self.client.send(packet)
+
+    # Send Signup Request Packet
+    def signup_request(self):
+        pass
+
+    # Send Login Request Packet
+    def login_request(self):
+        pass
+
+    # Search for a user on server
+    def search_user(self, recv_id) -> str:
+        pass
 
 
 if __name__ == '__main__':

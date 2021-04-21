@@ -9,7 +9,7 @@ logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
 
 users = {}
-usr = None
+usr = False
 
 client_database = list()
 friend_list = list()
@@ -44,6 +44,7 @@ def html_page(page_name):
                     # Receive Message Thread
                     thread = threading.Thread(target=receive)
                     thread.start()
+                    usr = True
 
                     # Main Chat App Model
                     return render_template("ui_chat.html")
@@ -57,7 +58,7 @@ def html_page(page_name):
 
                 # Babble Object
                 user_object = create_user(signupid, signup_name, signuppassword)  # REMAIN
-                if user_object.success:
+                if user_object.signup_success:
                     script = '''
                     <script>
                          setTimeout(function(){

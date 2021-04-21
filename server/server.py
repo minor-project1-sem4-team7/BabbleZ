@@ -5,7 +5,6 @@ import mongo_dao
 import rsa
 import pickle
 import logging
-import Security
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
@@ -141,17 +140,17 @@ class Handler:
             # Message Send Request Handler
             packet = pickle.loads(packet)
 
-            pkt_type = rsa.decrypt(packet[-1], __server_private_key__).decode()
+            pkt_typ = rsa.decrypt(packet[-1], __server_private_key__).decode()
 
             # Handling Incoming Packet
-            if pkt_type == 'msg':
-
+            if pkt_typ == 'msg':
 
                 payload = packet[0]
                 rcvd_metadata = list()
                 for values in packet[1]:
                     rcvd_metadata.append(rsa.decrypt(values,__server_private_key__).decode())
 
+                # Searching Receiver Object Handel
                 rcvr_handler = next((x for x in active_clients if x.user_id == rcvd_metadata[0]), None)      # DEBUG
 
                 # Creating Forward Packet
@@ -163,7 +162,7 @@ class Handler:
                     self.send_msg(rcvr_handler.user_socket,packet)
 
             # Handling Status update packet
-            elif pkt_type == 'status':
+            elif pkt_typ == 'status':
 
                 def update_status():
                     self.status = True
@@ -174,7 +173,7 @@ class Handler:
                 status_thread.start()
 
             # Password Change Request Handler
-            elif pkt_type == 'passwd':
+            elif pkt_typ == 'passwd':
                 userid = rsa.decrypt(packet[1], __server_private_key__).decode()
 
                 if userid == self.user_id:
@@ -182,7 +181,6 @@ class Handler:
                     try:
                         _srv_db.update_by('Profiles', 'user_id', self.user_id, {"password": newpass})
 
-                        return 0
                     except:
                         self.send_msg(self.user_socket,rcd_packet(-97))
                 else:
