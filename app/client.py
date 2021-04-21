@@ -159,11 +159,11 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             return self.get_publicKey(recv_id)
         else:
             # returns the public key
-            rcv_public_key = self.search_user(recv_id)
-            if rcv_public_key:
-                return rcv_public_key
-            else:
-                raise Exception()
+            self.search_user(recv_id)
+            # if rcv_public_key:
+            #     return rcv_public_key
+            # else:
+            #     raise Exception()
 
     # send message method
     def send_msg(self, message, receiver_id):
@@ -232,8 +232,12 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         pass
 
     # Search for a user on server
-    def search_user(self, recv_id) -> str:
-        pass
+    def search_user(self, recv_id) :
+        pkt_typ = Security.personal_encrypt('publickey')
+        recv_id = Security.personal_encrypt(recv_id)
+        drop = [recv_id, pkt_typ]
+        packet = pickle.dumps(drop)
+        self.client.send(packet)
 
 
 if __name__ == '__main__':
