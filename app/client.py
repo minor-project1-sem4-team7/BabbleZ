@@ -8,6 +8,8 @@ import pickle
 import mongo_dao
 import logging
 
+BUFFER_SIZE = 5210
+
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
 
@@ -120,15 +122,28 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
                 # Initiate Security Generation
                 Security.Security.__init__(self, passwd)
+                self.password = Security.hash_str(passwd)
 
                 # Send Signup Packet
-                self.signup_request()
+                self.signup_request(user_id, username)
+
+                def capture_response():
+
+                    self.client.settimeout(2)
+                    packet = self.client.recv(BUFFER_SIZE)
+                    drop = pickle.loads(packet)
+
+                    pkt_typ = self.personal_decrypt(drop[-1])
+
+                    if pkt_typ == 'signup':
+                        self.signup_success = self.personal_decrypt(drop[0])
 
                 # Waiting Time
-                limit = 300
-                while not self.signup_success and limit:
-                    limit -= 1
-                    time.sleep(1)
+                # limit = 60
+                # while not self.signup_success and limit:
+                #     limit -= 1
+                #     time.sleep(1)
+                capture_response()
                 if self.signup_success:
                     store_user_data()
             except:
@@ -211,7 +226,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
     def received_message(self):
         try:
-            message = self.client.recv(1024)
+            message = self.client.recv(BUFFER_SIZE)
             if len(message):
                 return self.extract_payload(message)
         except Exception as e:
@@ -224,8 +239,19 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             self.client.send(packet)
 
     # Send Signup Request Packet
-    def signup_request(self):
-        pass
+    def signup_request(self, user_id, username):
+        try:
+            pkt_typ = 'signup'
+            data = [user_id, self.password, self.publicKey, username]
+            metadata = list()
+            for value in data:
+                metadata.append(Security.personal_encrypt(value))
+            pkt_typ = Security.personal_encrypt(pkt_typ)
+
+            packet = pickle.dumps([metadata, pkt_typ])
+            self.client.send(packet)
+        except Exception as e:
+            print(e)
 
     # Send Login Request Packet
     def login_request(self):

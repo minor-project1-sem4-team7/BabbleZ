@@ -2,7 +2,23 @@
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from client import log
+from datetime import datetime
+
+def log(typ: str, text: str):
+    """
+    [!] Information\n
+    [#] Important or Warning\n
+    [.] Process\n
+    [-] Error\n
+    [+] Success\n
+    [N] Count
+    """
+
+    timestamp = datetime.now()
+
+    typ = '[' + typ + ']'
+    with open('logfile.txt', 'a') as file:
+        file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
 
 """
 Use DAO to interface backend code with MongoDB

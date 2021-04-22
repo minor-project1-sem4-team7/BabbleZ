@@ -14,6 +14,7 @@ usr = False
 client_database = list()
 friend_list = list()
 
+
 @babbleZ_app.route('/', methods=["POST", "GET"])
 def my_home():
     return redirect('index')
@@ -34,7 +35,7 @@ def html_page(page_name):
                     global client_database
                     global friend_list
                     user_object = login_user(loginid, loginpassword)
-                    client_database = user_object.get_collection(user_object.user_id)       # TEMP
+                    client_database = user_object.get_collection(user_object.user_id)  # TEMP
                     user_object.get_collection(user_object.user_id)  # TEMP
 
                     def receive():
@@ -98,9 +99,12 @@ def get_javascript_data(doc):
     # return jsonify({'messages': client_database[userid]})
 
 
-@babbleZ_app.route('/refreshmessages')
+@babbleZ_app.route('/refreshmessages',methods=['GET','POST'])
 def refresh_messages():
-    return render_template("userdata.html", message_backend=client_database)
+    if request.method=="POST":
+        userid=int(request.form['userid'])
+        # print(userid)
+    return render_template("userdata.html",message_backend=client_database[userid])
 
 
 @babbleZ_app.route('/inner_interface', methods=["POST", "GET"])
@@ -171,3 +175,8 @@ if __name__ == "__main__":
 
 # Friend List
 # client Database
+
+
+
+
+

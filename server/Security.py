@@ -1,3 +1,5 @@
+import pickle
+
 import rsa
 
 # Initial Global Authentication
@@ -16,3 +18,34 @@ def get_key(key: str):
     return rsa.PublicKey(key_numeric[0], key_numeric[1])
 
 
+def encrypt_data(plain_text, public_key):
+
+    encrypted = list()
+    offset = 0
+    chun_size = 116
+    end_loop = False
+
+    while not end_loop:
+
+        chunk = plain_text[offset: offset + chun_size]
+
+        if len(chunk) % chun_size != 0:
+            end_loop = True
+
+        enc_chunk = rsa.encrypt(chunk.encode(), public_key)
+
+        offset += chun_size
+        encrypted.append(enc_chunk)
+
+    return pickle.dumps(encrypted)
+
+
+def decrypt_data(crypt_text):
+
+    encrypted = pickle.loads(crypt_text)
+
+    decrypted_text = ''
+    for chunk in encrypted:
+        decrypted_text += rsa.decrypt(chunk, __server_private_key__).decode()
+
+    return decrypted_text
