@@ -239,8 +239,13 @@ def msg_classifier(packet, sock : socket.socket = None, adrs = None):
                 "username": metadata[3]
             }
             _srv_db.insert('Profiles', js_obj)
+
+
+
             res = Security.encrypt_data('Success', get_key(js_obj['public_key']))
-            sock.send(res)
+            drop = [res, Security.encrypt_data('signup', get_key(js_obj['public_key']))]
+            packet = pickle.dumps(drop)
+            sock.send(packet)
         except:
             sock.send(rcd_packet(-98))
 
@@ -268,9 +273,9 @@ if __name__ == '__main__':
 
         pack = client_socket.recv(BUFFER_SIZE)
         first_packet += pack
-        print(first_packet)
+        # print(first_packet)
         if first_packet:
-            msg_classifier(first_packet,client_socket, client_address)
+            msg_classifier(pack,client_socket, client_address)
 
 
     while True:

@@ -9,6 +9,7 @@ import mongo_dao
 import logging
 
 BUFFER_SIZE = 5210
+TIMEOUT = 180
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
@@ -38,28 +39,36 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         # Initiate Database
         mongo_dao.MongoDAO.__init__(self, user_id)
 
+        # Socket Connection Started
+        self.client = socket.socket()
+        self.port = 27526
+        self.ip = '127.0.0.1'
+        self.is_connected = False
+
+        log('!', f'Server IP {self.ip}')
+        log('!', f'Server PORT {self.port}')
+
         # Initiate User
-        user.User.__init__(self)
+        password = Security.hash_str(passwd)
+        user.User.__init__(self, user_id, password)
         # Set Default Login = False
         self.logged_in = False
 
         # Generate and Store New User Information
         def store_user_data():
-            self.user_id = user_id
+
             self.username = username
-            self.password = Security.hash_str(passwd)
             self.user_dp = 'Not set'  # TEMP
 
-            js_obj = {"user_id": user_id,
+            js_obj = {"user_id": self.user_id,
                       "username": username,
-                      "password": self.password,
+                      "password": self.user_password,
                       "public_key": str(self._public_key),
                       "private_key": str(self._private_key),
                       "about": 'not_set_yet',
                       "display_profile": self.user_dp
                       }
             self.insert('Profile', js_obj)
-            print('Success')
             log('+', f'Signup Successful as {self.user_id}')
 
         # Load Already Existed User Information
@@ -91,22 +100,13 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             keys = self.get_myKeys(user_id)
 
             # Initiate Security
-            Security.Security.__init__(self, passwd, keys)
+            Security.Security.__init__(self, keys)
 
             # Set Password Again, Hashed Password
             self.password = self.get_one('Profile', 'user_id', self.user_id)["password"]
 
             # Set Login Flag
             self.logged_in = True
-
-            # Socket Connection Started
-            self.client = socket.socket()
-            self.port = 27526
-            self.ip = '127.0.0.1'
-            self.is_connected = False
-
-            log('!', f'Server IP {self.ip}')
-            log('!', f'Server PORT {self.port}')
 
             # Initiate Connection To Server
             self.connect()
@@ -121,15 +121,14 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
                 self.connect()
 
                 # Initiate Security Generation
-                Security.Security.__init__(self, passwd)
-                self.password = Security.hash_str(passwd)
+                Security.Security.__init__(self)
 
                 # Send Signup Packet
                 self.signup_request(user_id, username)
 
                 def capture_response():
 
-                    self.client.settimeout(2)
+                    self.client.settimeout(TIMEOUT)
                     packet = self.client.recv(BUFFER_SIZE)
                     drop = pickle.loads(packet)
 
@@ -242,7 +241,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
     def signup_request(self, user_id, username):
         try:
             pkt_typ = 'signup'
-            data = [user_id, self.password, self.publicKey, username]
+            data = [user_id, self.user_password, self.publicKey, username]
             metadata = list()
             for value in data:
                 metadata.append(Security.personal_encrypt(value))
@@ -255,7 +254,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
     # Send Login Request Packet
     def login_request(self):
-        passwd = Security.personal_encrypt(self.password)
+        passwd = Security.personal_encrypt(self.user_password)
         userid = Security.personal_encrypt(self.user_id)
         pubkey = Security.personal_encrypt(self.publicKey)
         pkt_typ = Security.personal_encrypt('login')

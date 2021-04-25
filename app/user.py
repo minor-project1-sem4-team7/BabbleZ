@@ -3,10 +3,10 @@ import re
 
 class User:
 
-    def __init__(self):
-        self.user_id = None
+    def __init__(self, userid, password):
+        self.user_id = userid
         self.username = None
-        self.user_password = None
+        self.user_password = password
         self.user_dp = None
         self.user_about = None
 
