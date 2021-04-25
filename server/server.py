@@ -275,7 +275,11 @@ if __name__ == '__main__':
         first_packet += pack
         # print(first_packet)
         if first_packet:
-            msg_classifier(pack,client_socket, client_address)
+            try:
+                msg_classifier(pack,client_socket, client_address)
+            except:
+                log('-', 'Caught Exception Handeling Message')
+                pass
 
 
     while True:

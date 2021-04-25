@@ -102,7 +102,7 @@ class MongoDAO:
 
     # Get My Hashed Password
     def get_user_password(self, user_id):
-        return self.get_one("Profile", "user_id", user_id)["password"]
+        return self.get_one("Profiles", "user_id", user_id)["password"]
 
     # Messaging
     # Saving to Database
