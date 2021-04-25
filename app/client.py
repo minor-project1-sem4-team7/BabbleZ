@@ -255,7 +255,14 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
     # Send Login Request Packet
     def login_request(self):
-        pass
+        passwd = Security.personal_encrypt(self.password)
+        userid = Security.personal_encrypt(self.user_id)
+        pubkey = Security.personal_encrypt(self.publicKey)
+        pkt_typ = Security.personal_encrypt('login')
+
+        drop = [passwd, userid, pubkey, pkt_typ]
+        packet = pickle.dumps(drop)
+        self.client.send(packet)
 
     # Search for a user on server
     def search_user(self, recv_id) :

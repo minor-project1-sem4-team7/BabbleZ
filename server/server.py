@@ -86,7 +86,7 @@ def rcd_packet(code : int):
         typ = Security.encrypt_data('exception', __client_initial_public_key__)
 
     er = Security.encrypt_data(rcd[str(code)], __client_initial_public_key__)
-    return pickle.dumps([typ,er])
+    return pickle.dumps([er, typ])
 
 
 # Per client Handler Class
