@@ -1,10 +1,11 @@
 import threading
+
 import client
 import Security
 
 if __name__ == '__main__':
-    user_object = client.Babble('test', 'test')
-    print(user_object.logged_in)
+    user_object = client.Babble('test_2', 'test_2')
+
 
     def receive():
         while True:
@@ -14,4 +15,4 @@ if __name__ == '__main__':
     thread = threading.Thread(target=receive)
     thread.start()
 
-    user_object.send_msg('Hello Testing', 'test_2')
+    # user_object.send_msg('Hello Testing', 'test_2')

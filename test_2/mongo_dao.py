@@ -2,6 +2,25 @@
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from datetime import datetime
+
+
+def log(typ: str, text: str):
+    """
+    [!] Information\n
+    [#] Important or Warning\n
+    [.] Process\n
+    [-] Error\n
+    [+] Success\n
+    [N] Count
+    """
+
+    timestamp = datetime.now()
+
+    typ = '[' + typ + ']'
+    with open('logfile.txt', 'a') as file:
+        file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
+
 
 """
 Use DAO to interface backend code with MongoDB
@@ -17,7 +36,7 @@ class MongoDAO:
     def __init__(self, db='BabbleZ'):
 
         self.host = 'localhost'
-        self.port = '9000'#                '27017'
+        self.port = '8000'
         self.database = db
 
         self.db_client = MongoClient(f'mongodb://{self.host}:{self.port}')
@@ -80,7 +99,11 @@ class MongoDAO:
 
     # Get Public Key Local DB
     def get_publicKey(self, user_id):
-        return self.get_one('Profiles', 'user_id', user_id)["public_key"]
+        return self.get_one('Friend', 'user_id', user_id)["public_key"]
+
+    # Get My Private Key
+    def get_myKeys(self, user_id):
+        return self.get_one('Profile', 'user_id', user_id)["private_key"]
 
     # Check for User In Local DB
     def if_user_exist(self, user_id):
@@ -98,7 +121,7 @@ class MongoDAO:
 
     # Get My Hashed Password
     def get_user_password(self, user_id):
-        return self.get_one("Profiles", "user_id", user_id)["password"]
+        return self.get_one("Profile", "user_id", user_id)["password"]
 
     # Messaging
     # Saving to Database
@@ -106,15 +129,19 @@ class MongoDAO:
 
         collection = metadata[0]
 
-        date_time = str(ObjectId(metadata[2]).generation_time)[:-6]
+        # date_time = str(ObjectId(metadata[2]).generation_time)[:-6]
+        date_time = metadata[1][:-6]
 
         js_obj = {"type": msg_type,
                   "date": str(date_time),
-                  "size": metadata[1],
+                  "size": metadata[2],
                   "payload": payload
                   }
 
-        return self.insert(collection, js_obj)
+        obj_id = self.insert(collection, js_obj)
+        if obj_id:
+            log('+', f'Document Created {self.database}.{collection}.{obj_id}')
+        return js_obj
 
     # Reading from Database
     def read_scriptures(self, userid):
@@ -138,7 +165,7 @@ if __name__ == '__main__':
 ---------------------------
 Stored Database Structure:
 ---------------------------
-Database : BabbleZ
+Database : BabbleZ      _ userid
     Collection : Profile
     Collection : Friends
 
@@ -158,6 +185,7 @@ Incoming / Sending Packet Structure:
         user_id
         size
         msg_id
+    type : msg
 
 
 '''

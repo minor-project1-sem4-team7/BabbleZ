@@ -99,7 +99,7 @@ class MongoDAO:
 
     # Get Public Key Local DB
     def get_publicKey(self, user_id):
-        return self.get_one('Friends', 'user_id', user_id)["public_key"]
+        return self.get_one('Friend', 'user_id', user_id)["public_key"]
 
     # Get My Private Key
     def get_myKeys(self, user_id):
@@ -129,11 +129,12 @@ class MongoDAO:
 
         collection = metadata[0]
 
-        date_time = str(ObjectId(metadata[2]).generation_time)[:-6]
+        # date_time = str(ObjectId(metadata[2]).generation_time)[:-6]
+        date_time = metadata[1][:-6]
 
         js_obj = {"type": msg_type,
                   "date": str(date_time),
-                  "size": metadata[1],
+                  "size": metadata[2],
                   "payload": payload
                   }
 

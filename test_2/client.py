@@ -202,7 +202,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
                 drop.append(Security.personal_encrypt('msg'))
                 packet = pickle.dumps(drop)
             except Exception as e:
-                log('-', 'Exception Raised while Sending message')
+                log('-', f'Exception Raised while Sending message, {e}')
                 return -1
 
             try:

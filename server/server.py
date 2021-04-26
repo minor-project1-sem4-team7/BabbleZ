@@ -48,7 +48,7 @@ def get_key(key: str) -> rsa.PublicKey:
 
 
 # configuration
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 5210
 IP = '0.0.0.0'
 PORT = 27526
 
@@ -107,17 +107,20 @@ class Handler:
         self.database = mongo_dao.MongoDAO(userid)
 
     # pickle packet Creator
-    def manifest_packet(self, payload, rcvd_metadata) -> bytes:
+    def manifest_packet(self, payload, rcvd_metadata, handler) -> bytes:
 
         drop = list()
         drop.append(payload)
-        info = [self.user_id, rcvd_metadata[1], rcvd_metadata[2]]
+        info = [self.user_id, rcvd_metadata[2], rcvd_metadata[3]]
         metadata = list()
+
+        pkey = handler.public_key
+
         for value in info:
-            metadata.append(Security.encrypt_data(value, self.public_key))
+            metadata.append(Security.encrypt_data(value, pkey))
 
         drop.append(metadata)
-        drop.append(Security.encrypt_data('msg', self.public_key))
+        drop.append(Security.encrypt_data('msg', pkey))
 
         return pickle.dumps(drop)
 
@@ -136,7 +139,9 @@ class Handler:
     # Client Received Message Handler
     def receive_msg_handler(self):
 
-        packet = self.user_socket.recv(BUFFER_SIZE)
+        packet = ''
+        while not len(packet):
+            packet = self.user_socket.recv(BUFFER_SIZE)
 
         if len(packet):
 
@@ -157,7 +162,7 @@ class Handler:
                 rcvr_handler = next((x for x in active_clients if x.user_id == rcvd_metadata[0]), None)      # DEBUG
 
                 # Creating Forward Packet
-                packet = self.manifest_packet(payload, rcvd_metadata)
+                packet = self.manifest_packet(payload, rcvd_metadata, rcvr_handler)
 
                 if not rcvr_handler:
                     pass
@@ -188,8 +193,18 @@ class Handler:
                         self.send_msg(self.user_socket,rcd_packet(-97))
                 else:
                     self.send_msg(self.user_socket,rcd_packet(-100))
+
+            elif pkt_typ == 'publickey':
+                user_id = Security.decrypt_data(packet[0])
+                uid = Security.encrypt_data(user_id, self.public_key)
+                pkey = Security.encrypt_data(_srv_db.get_publicKey(user_id),self.public_key)
+                typ = Security.encrypt_data('publickey', self.public_key)
+                drop = [uid, pkey, typ]
+                self.send_msg(self.user_socket, pickle.dumps(drop))
             else:
                 self.send_msg(self.user_socket,rcd_packet(-100))
+
+            packet = ''
 
     def initiate_user(self):
         while True:

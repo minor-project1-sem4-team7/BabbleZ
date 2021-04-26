@@ -1,8 +1,149 @@
-[!] 2021-04-26 08:44:04.610925 Server IP 127.0.0.1
-[!] 2021-04-26 08:44:04.611041 Server PORT 27526
-[+] 2021-04-26 08:44:04.611219 Connection made successfully to server
-[+] 2021-04-26 08:44:06.382887 Signup Successful as test
-[!] 2021-04-26 13:14:21.502000 Server IP 127.0.0.1
-[!] 2021-04-26 13:14:21.502219 Server PORT 27526
-[+] 2021-04-26 13:14:21.506774 Logged In Successfully as test
-[+] 2021-04-26 13:14:21.509785 Connection made successfully to server
+[!] 2021-04-26 13:44:59.486085 Server IP 127.0.0.1
+[!] 2021-04-26 13:44:59.486239 Server PORT 27526
+[+] 2021-04-26 13:44:59.489914 Logged In Successfully as test
+[+] 2021-04-26 13:44:59.491916 Connection made successfully to server
+[!] 2021-04-26 14:00:51.188396 Server IP 127.0.0.1
+[!] 2021-04-26 14:00:51.188561 Server PORT 27526
+[+] 2021-04-26 14:00:51.192416 Logged In Successfully as test
+[+] 2021-04-26 14:00:51.194626 Connection made successfully to server
+[-] 2021-04-26 14:01:02.404399 Exception Raised while Sending message
+[!] 2021-04-26 14:02:00.505677 Server IP 127.0.0.1
+[!] 2021-04-26 14:02:00.505743 Server PORT 27526
+[+] 2021-04-26 14:02:00.507988 Logged In Successfully as test
+[+] 2021-04-26 14:02:00.509163 Connection made successfully to server
+[-] 2021-04-26 14:02:49.906531 Exception Raised while Sending message
+[!] 2021-04-26 14:05:06.624499 Server IP 127.0.0.1
+[!] 2021-04-26 14:05:06.624685 Server PORT 27526
+[+] 2021-04-26 14:05:06.627724 Logged In Successfully as test
+[+] 2021-04-26 14:05:06.629703 Connection made successfully to server
+[-] 2021-04-26 14:05:38.611223 Exception Raised while Sending message
+[!] 2021-04-26 14:28:53.167162 Server IP 127.0.0.1
+[!] 2021-04-26 14:28:53.167304 Server PORT 27526
+[+] 2021-04-26 14:28:53.170153 Logged In Successfully as test
+[+] 2021-04-26 14:28:53.171781 Connection made successfully to server
+[-] 2021-04-26 14:28:54.785385 Exception Raised while Sending message
+[!] 2021-04-26 14:34:39.082856 Server IP 127.0.0.1
+[!] 2021-04-26 14:34:39.083403 Server PORT 27526
+[+] 2021-04-26 14:34:39.101336 Logged In Successfully as test
+[+] 2021-04-26 14:34:39.104661 Connection made successfully to server
+[-] 2021-04-26 14:35:03.740278 Exception Raised while Sending message
+[!] 2021-04-26 15:49:16.159381 Server IP 127.0.0.1
+[!] 2021-04-26 15:49:16.159638 Server PORT 27526
+[+] 2021-04-26 15:49:16.163346 Logged In Successfully as test
+[+] 2021-04-26 15:49:16.166470 Connection made successfully to server
+[-] 2021-04-26 15:49:50.470473 Exception Raised while Sending message
+[!] 2021-04-26 15:54:29.948067 Server IP 127.0.0.1
+[!] 2021-04-26 15:54:29.948456 Server PORT 27526
+[+] 2021-04-26 15:54:29.964481 Logged In Successfully as test
+[+] 2021-04-26 15:54:29.967666 Connection made successfully to server
+[-] 2021-04-26 15:55:35.722047 Exception Raised while Sending message
+[!] 2021-04-26 16:12:00.035386 Server IP 127.0.0.1
+[!] 2021-04-26 16:12:00.036337 Server PORT 27526
+[+] 2021-04-26 16:12:00.052822 Logged In Successfully as test
+[+] 2021-04-26 16:12:00.056004 Connection made successfully to server
+[!] 2021-04-26 16:14:38.362337 Server IP 127.0.0.1
+[!] 2021-04-26 16:14:38.362655 Server PORT 27526
+[+] 2021-04-26 16:14:38.365536 Logged In Successfully as test
+[+] 2021-04-26 16:14:38.367593 Connection made successfully to server
+[-] 2021-04-26 16:16:48.979060 Exception Raised while Sending message
+[!] 2021-04-26 16:45:10.501616 Server IP 127.0.0.1
+[!] 2021-04-26 16:45:10.501842 Server PORT 27526
+[+] 2021-04-26 16:45:10.520328 Logged In Successfully as test
+[+] 2021-04-26 16:45:10.523503 Connection made successfully to server
+[!] 2021-04-26 16:58:52.866992 Server IP 127.0.0.1
+[!] 2021-04-26 16:58:52.867425 Server PORT 27526
+[+] 2021-04-26 16:58:52.884713 Logged In Successfully as test
+[+] 2021-04-26 16:58:52.887726 Connection made successfully to server
+[-] 2021-04-26 16:58:52.897220 Exception Raised while Sending message
+[!] 2021-04-26 17:03:43.170112 Server IP 127.0.0.1
+[!] 2021-04-26 17:03:43.170810 Server PORT 27526
+[+] 2021-04-26 17:03:43.188605 Logged In Successfully as test
+[+] 2021-04-26 17:03:43.191815 Connection made successfully to server
+[!] 2021-04-26 17:05:14.629945 Server IP 127.0.0.1
+[!] 2021-04-26 17:05:14.630485 Server PORT 27526
+[+] 2021-04-26 17:05:14.647814 Logged In Successfully as test
+[+] 2021-04-26 17:05:14.652453 Connection made successfully to server
+[!] 2021-04-26 17:06:54.932759 Server IP 127.0.0.1
+[!] 2021-04-26 17:06:54.933722 Server PORT 27526
+[+] 2021-04-26 17:06:54.953688 Logged In Successfully as test
+[+] 2021-04-26 17:06:54.956869 Connection made successfully to server
+[-] 2021-04-26 17:08:44.396922 Exception Raised while Sending message
+[!] 2021-04-26 17:13:38.829278 Server IP 127.0.0.1
+[!] 2021-04-26 17:13:38.829930 Server PORT 27526
+[+] 2021-04-26 17:13:38.847996 Logged In Successfully as test
+[+] 2021-04-26 17:13:38.851106 Connection made successfully to server
+[-] 2021-04-26 17:16:51.579776 Exception Raised while Sending message
+[!] 2021-04-26 17:17:31.730096 Server IP 127.0.0.1
+[!] 2021-04-26 17:17:31.730581 Server PORT 27526
+[+] 2021-04-26 17:17:31.747805 Logged In Successfully as test
+[+] 2021-04-26 17:17:31.751043 Connection made successfully to server
+[-] 2021-04-26 17:18:31.195552 Exception Raised while Sending message
+[!] 2021-04-26 17:26:27.867286 Server IP 127.0.0.1
+[!] 2021-04-26 17:26:27.867508 Server PORT 27526
+[+] 2021-04-26 17:26:27.887543 Logged In Successfully as test
+[+] 2021-04-26 17:26:27.891578 Connection made successfully to server
+[-] 2021-04-26 17:27:03.818674 Exception Raised while Sending message, 'NoneType' object is not subscriptable
+[!] 2021-04-26 17:27:08.819173 Server IP 127.0.0.1
+[!] 2021-04-26 17:27:08.819373 Server PORT 27526
+[+] 2021-04-26 17:27:08.831902 Logged In Successfully as test
+[+] 2021-04-26 17:27:08.833748 Connection made successfully to server
+[-] 2021-04-26 17:30:00.837663 Exception Raised while Sending message, 'NoneType' object is not subscriptable
+[!] 2021-04-26 17:30:25.128580 Server IP 127.0.0.1
+[!] 2021-04-26 17:30:25.128902 Server PORT 27526
+[+] 2021-04-26 17:30:33.646958 Logged In Successfully as test
+[+] 2021-04-26 17:30:40.839900 Connection made successfully to server
+[-] 2021-04-26 17:32:34.088528 Exception Raised while Sending message, 'NoneType' object is not subscriptable
+[!] 2021-04-26 17:32:38.269076 Server IP 127.0.0.1
+[!] 2021-04-26 17:32:38.269535 Server PORT 27526
+[+] 2021-04-26 17:32:46.914532 Logged In Successfully as test
+[+] 2021-04-26 17:32:56.910627 Connection made successfully to server
+[!] 2021-04-26 17:36:55.426304 Server IP 127.0.0.1
+[!] 2021-04-26 17:36:55.427598 Server PORT 27526
+[+] 2021-04-26 17:36:59.562948 Logged In Successfully as test
+[+] 2021-04-26 17:37:03.325215 Connection made successfully to server
+[!] 2021-04-26 17:37:48.254861 Server IP 127.0.0.1
+[!] 2021-04-26 17:37:48.255048 Server PORT 27526
+[+] 2021-04-26 17:37:50.943476 Logged In Successfully as test
+[+] 2021-04-26 17:37:53.833366 Connection made successfully to server
+[-] 2021-04-26 17:38:24.332015 Exception Raised while Sending message, 'NoneType' object is not subscriptable
+[!] 2021-04-26 17:50:29.167570 Server IP 127.0.0.1
+[!] 2021-04-26 17:50:29.167952 Server PORT 27526
+[+] 2021-04-26 17:50:29.183267 Logged In Successfully as test
+[+] 2021-04-26 17:50:29.188256 Connection made successfully to server
+[!] 2021-04-26 17:54:49.253982 Server IP 127.0.0.1
+[!] 2021-04-26 17:54:49.254421 Server PORT 27526
+[+] 2021-04-26 17:54:53.327628 Logged In Successfully as test
+[+] 2021-04-26 17:54:55.901601 Connection made successfully to server
+[!] 2021-04-26 17:56:36.350091 Server IP 127.0.0.1
+[!] 2021-04-26 17:56:36.350532 Server PORT 27526
+[+] 2021-04-26 17:56:39.166504 Logged In Successfully as test
+[+] 2021-04-26 17:56:41.512171 Connection made successfully to server
+[!] 2021-04-26 18:37:56.179782 Server IP 127.0.0.1
+[!] 2021-04-26 18:37:56.180754 Server PORT 27526
+[+] 2021-04-26 18:37:56.198340 Logged In Successfully as test
+[+] 2021-04-26 18:37:56.201929 Connection made successfully to server
+[!] 2021-04-26 18:43:58.924793 Server IP 127.0.0.1
+[!] 2021-04-26 18:43:58.925578 Server PORT 27526
+[+] 2021-04-26 18:43:58.942681 Logged In Successfully as test
+[+] 2021-04-26 18:43:58.945816 Connection made successfully to server
+[!] 2021-04-26 18:48:31.883283 Server IP 127.0.0.1
+[!] 2021-04-26 18:48:31.883634 Server PORT 27526
+[+] 2021-04-26 18:48:31.900495 Logged In Successfully as test
+[+] 2021-04-26 18:48:31.903696 Connection made successfully to server
+[!] 2021-04-26 18:49:37.989076 Server IP 127.0.0.1
+[!] 2021-04-26 18:49:37.990811 Server PORT 27526
+[+] 2021-04-26 18:49:38.004707 Logged In Successfully as test
+[+] 2021-04-26 18:49:38.007740 Connection made successfully to server
+[-] 2021-04-26 18:50:09.037244 Exception [Errno 104] Connection reset by peer
+[!] 2021-04-26 18:50:46.589104 Server IP 127.0.0.1
+[!] 2021-04-26 18:50:46.590328 Server PORT 27526
+[+] 2021-04-26 18:50:46.606494 Logged In Successfully as test
+[+] 2021-04-26 18:50:46.609605 Connection made successfully to server
+[!] 2021-04-26 18:56:32.151464 Server IP 127.0.0.1
+[!] 2021-04-26 18:56:32.151746 Server PORT 27526
+[+] 2021-04-26 18:56:32.169917 Logged In Successfully as test
+[+] 2021-04-26 18:56:32.173085 Connection made successfully to server
+[!] 2021-04-26 19:38:27.894369 Server IP 127.0.0.1
+[!] 2021-04-26 19:38:27.894592 Server PORT 27526
+[+] 2021-04-26 19:38:27.898499 Logged In Successfully as test
+[+] 2021-04-26 19:38:27.900827 Connection made successfully to server
