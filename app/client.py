@@ -1,5 +1,5 @@
+import base64
 import socket
-import time
 from datetime import datetime
 import Security
 import user
@@ -8,7 +8,7 @@ import pickle
 import mongo_dao
 import logging
 
-BUFFER_SIZE = 5210
+BUFFER_SIZE = 1024
 TIMEOUT = 180
 
 logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
@@ -42,7 +42,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         # Socket Connection Started
         self.client = socket.socket()
         self.port = 27526
-        self.ip = '127.0.0.1'
+        self.ip = '127.0.0.1' #'54.88.104.208'
         self.is_connected = False
 
         log('!', f'Server IP {self.ip}')
@@ -287,4 +287,3 @@ if __name__ == '__main__':
 
     thread = threading.Thread(target=receive)
     thread.start()
-

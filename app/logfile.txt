@@ -1,0 +1,8 @@
+[!] 2021-04-26 08:44:04.610925 Server IP 127.0.0.1
+[!] 2021-04-26 08:44:04.611041 Server PORT 27526
+[+] 2021-04-26 08:44:04.611219 Connection made successfully to server
+[+] 2021-04-26 08:44:06.382887 Signup Successful as test
+[!] 2021-04-26 13:14:21.502000 Server IP 127.0.0.1
+[!] 2021-04-26 13:14:21.502219 Server PORT 27526
+[+] 2021-04-26 13:14:21.506774 Logged In Successfully as test
+[+] 2021-04-26 13:14:21.509785 Connection made successfully to server

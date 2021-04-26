@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
 
+
 def log(typ: str, text: str):
     """
     [!] Information\n
@@ -20,6 +21,7 @@ def log(typ: str, text: str):
     with open('logfile.txt', 'a') as file:
         file.write(typ + ' ' + str(timestamp) + ' ' + text + '\n')
 
+
 """
 Use DAO to interface backend code with MongoDB
 get_one - retrieve one document from collection
@@ -31,7 +33,7 @@ insert  - insert document into collection
 
 class MongoDAO:
 
-    def __init__(self, db = 'BabbleZ'):
+    def __init__(self, db='BabbleZ'):
 
         self.host = 'localhost'
         self.port = '27017'
@@ -54,7 +56,6 @@ class MongoDAO:
     # Update by field
     def update_by(self, collection, attribute, value, dic):
         self.db_client[self.database][collection].update_one({attribute: value}, {"$set": dic}, upsert=True)
-
 
     # Get all
     def get_all(self, collection, filter_field, filter_value):
@@ -166,7 +167,7 @@ Stored Database Structure:
 Database : BabbleZ      _ userid
     Collection : Profile
     Collection : Friends
-        
+
     Collection : user_id
         {
             "type": received/sent

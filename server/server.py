@@ -1,3 +1,5 @@
+import base64
+import sys
 import threading
 import socket
 import time
@@ -46,7 +48,7 @@ def get_key(key: str) -> rsa.PublicKey:
 
 
 # configuration
-BUFFER_SIZE = 5210
+BUFFER_SIZE = 1024
 IP = '0.0.0.0'
 PORT = 27526
 
@@ -240,8 +242,6 @@ def msg_classifier(packet, sock : socket.socket = None, adrs = None):
             }
             _srv_db.insert('Profiles', js_obj)
 
-
-
             res = Security.encrypt_data('Success', get_key(js_obj['public_key']))
             drop = [res, Security.encrypt_data('signup', get_key(js_obj['public_key']))]
             packet = pickle.dumps(drop)
@@ -277,8 +277,8 @@ if __name__ == '__main__':
         if first_packet:
             try:
                 msg_classifier(pack,client_socket, client_address)
-            except:
-                log('-', 'Caught Exception Handeling Message')
+            except Exception as e:
+                log('-', f'Caught Exception Handeling Message, {e}')
                 pass
 
 
