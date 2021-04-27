@@ -138,83 +138,80 @@ class Handler:
 
     # Client Received Message Handler
     def receive_msg_handler(self):
+        try:
+            packet = ''
+            while not len(packet):
+                packet = self.user_socket.recv(BUFFER_SIZE)
 
-        packet = ''
-        while not len(packet):
-            packet = self.user_socket.recv(BUFFER_SIZE)
+            if len(packet):
 
-        if len(packet):
+                # Message Send Request Handler
+                packet = pickle.loads(packet)
 
-            # Message Send Request Handler
-            packet = pickle.loads(packet)
+                pkt_typ = Security.decrypt_data(packet[-1])
 
-            pkt_typ = Security.decrypt_data(packet[-1])
+                # Handling Incoming Packet
+                if pkt_typ == 'msg':
 
-            # Handling Incoming Packet
-            if pkt_typ == 'msg':
+                    payload = packet[0]
+                    rcvd_metadata = list()
+                    for values in packet[1]:
+                        rcvd_metadata.append(Security.decrypt_data(values))
 
-                payload = packet[0]
-                rcvd_metadata = list()
-                for values in packet[1]:
-                    rcvd_metadata.append(Security.decrypt_data(values))
+                    # Searching Receiver Object Handel
+                    rcvr_handler = next((x for x in active_clients if x.user_id == rcvd_metadata[0]), None)      # DEBUG
 
-                # Searching Receiver Object Handel
-                rcvr_handler = next((x for x in active_clients if x.user_id == rcvd_metadata[0]), None)      # DEBUG
+                    # Creating Forward Packet
+                    packet = self.manifest_packet(payload, rcvd_metadata, rcvr_handler)
 
-                # Creating Forward Packet
-                packet = self.manifest_packet(payload, rcvd_metadata, rcvr_handler)
+                    if not rcvr_handler:
+                        pass
+                    else:
+                        self.send_msg(rcvr_handler.user_socket,packet)
 
-                if not rcvr_handler:
-                    pass
-                else:
-                    self.send_msg(rcvr_handler.user_socket,packet)
+                # Handling Status update packet
+                elif pkt_typ == 'status':
 
-            # Handling Status update packet
-            elif pkt_typ == 'status':
+                    def update_status():
+                        self.status = True
+                        time.sleep(60)
+                        self.status = False
 
-                def update_status():
-                    self.status = True
-                    time.sleep(60)
-                    self.status = False
+                    status_thread = threading.Thread(target=update_status)
+                    status_thread.start()
 
-                status_thread = threading.Thread(target=update_status)
-                status_thread.start()
+                # Password Change Request Handler
+                elif pkt_typ == 'passwd':
+                    userid = Security.decrypt_data(packet[1])
 
-            # Password Change Request Handler
-            elif pkt_typ == 'passwd':
-                userid = Security.decrypt_data(packet[1])
+                    if userid == self.user_id:
+                        newpass = Security.decrypt_data(packet[0])
+                        try:
+                            _srv_db.update_by('Profiles', 'user_id', self.user_id, {"password": newpass})
 
-                if userid == self.user_id:
-                    newpass = Security.decrypt_data(packet[0])
-                    try:
-                        _srv_db.update_by('Profiles', 'user_id', self.user_id, {"password": newpass})
+                        except:
+                            self.send_msg(self.user_socket,rcd_packet(-97))
+                    else:
+                        self.send_msg(self.user_socket,rcd_packet(-100))
 
-                    except:
-                        self.send_msg(self.user_socket,rcd_packet(-97))
+                elif pkt_typ == 'publickey':
+                    user_id = Security.decrypt_data(packet[0])
+                    uid = Security.encrypt_data(user_id, self.public_key)
+                    pkey = Security.encrypt_data(_srv_db.get_publicKey(user_id),self.public_key)
+                    typ = Security.encrypt_data('publickey', self.public_key)
+                    drop = [uid, pkey, typ]
+                    self.send_msg(self.user_socket, pickle.dumps(drop))
                 else:
                     self.send_msg(self.user_socket,rcd_packet(-100))
+                    del self
 
-            elif pkt_typ == 'publickey':
-                user_id = Security.decrypt_data(packet[0])
-                uid = Security.encrypt_data(user_id, self.public_key)
-                pkey = Security.encrypt_data(_srv_db.get_publicKey(user_id),self.public_key)
-                typ = Security.encrypt_data('publickey', self.public_key)
-                drop = [uid, pkey, typ]
-                self.send_msg(self.user_socket, pickle.dumps(drop))
-            else:
-                self.send_msg(self.user_socket,rcd_packet(-100))
-
-            packet = ''
+                packet = ''
+        except:
+            del self
 
     def initiate_user(self):
         while True:
-            try:
-                self.receive_msg_handler()
-            except Exception as e:
-                self.send_msg(self.user_socket, rcd_packet(-100))
-                log('-', f'Exception {e}')
-                del self
-
+            self.receive_msg_handler()
         # recv_thread = threading.Thread(target= self.receive_msg_handler)
         # recv_thread.start()
 
