@@ -17,7 +17,7 @@ class MongoDAO:
     def __init__(self, db='BabbleZ'):
 
         self.host = 'localhost'
-        self.port = '9000'#                '27017'
+        self.port = '27017'
         self.database = db
 
         self.db_client = MongoClient(f'mongodb://{self.host}:{self.port}')

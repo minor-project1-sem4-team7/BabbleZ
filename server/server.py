@@ -1,5 +1,3 @@
-import base64
-import sys
 import threading
 import socket
 import time
@@ -68,7 +66,7 @@ _srv_db = mongo_dao.MongoDAO()
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind((IP, PORT))
-server_socket.listen()
+server_socket.listen(5)
 
 print(f'Listening for connections on {IP}:{PORT}...!')
 
@@ -286,32 +284,41 @@ def msg_classifier(packet, sock : socket.socket = None, adrs = None):
 
 if __name__ == '__main__':
 
-    def starting_server():
-
-        first_packet = b''
-        client_socket , client_address = server_socket.accept()
-        log('+', f'Connected to {client_address}')
-        # client_socket.send(f'Hello {client_address} You are connected'.encode())
-
-        pack = client_socket.recv(BUFFER_SIZE)
-        first_packet += pack
-        # print(first_packet)
-        if first_packet:
-            try:
-                msg_classifier(pack,client_socket, client_address)
-            except Exception as e:
-                log('-', f'Caught Exception Handeling Message, {e}')
-                pass
-
-
     while True:
-        server_thread = threading.Thread(target=starting_server())
-        try:
-            server_thread.start()
-        except:
 
-            log('#', 'Server Reset')
-            pass
+        try:
+            def starting_server():
+
+                first_packet = b''
+                client_socket , client_address = server_socket.accept()
+                log('+', f'Connected to {client_address}')
+                # client_socket.send(f'Hello {client_address} You are connected'.encode())
+
+                first_packet = b''
+                while True:
+                    pack = client_socket.recv(BUFFER_SIZE)
+                    first_packet += pack
+                    if not len(pack):
+                        break
+                # print(first_packet)
+                if first_packet:
+                    try:
+                        msg_classifier(first_packet,client_socket, client_address)
+                    except Exception as e:
+                        log('-', f'Caught Exception Handeling Message, {e}')
+                        pass
+
+
+            while True:
+                server_thread = threading.Thread(target=starting_server())
+                try:
+                    server_thread.start()
+                except:
+
+                    log('#', 'Server Reset')
+                    pass
+        except Exception as e:
+            log('#', f'{e}')
 
 
 ## IMPORTANT DATA LIMITER
