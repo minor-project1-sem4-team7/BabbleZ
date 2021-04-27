@@ -13,6 +13,38 @@ logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
 
 
+HEADER=900
+FORMAT='utf-8'
+
+
+def get_packet(client_socket :socket.socket):
+
+    counter_length=client_socket.recv(HEADER).decode()
+    counter_length=int(counter_length)
+    # print(f'here is the counter length {counter_length}')
+        
+
+    segmented_packets=list()
+
+    for i in range(0,counter_length):
+        packet_length=client_socket.recv(HEADER).decode()
+        packet_length=int(packet_length)
+        if packet_length:
+            pack=client_socket.recv(packet_length)
+            # print(f'here is the pickle pack {pack}')
+            # print(pack)
+            # drop=pickle.loads(pack)
+            # print(drop)
+            # indv_packet = base64.b64decode(drop)
+            # print(f'individual packet {indv_packet}')
+            segmented_packets.append(pack)
+        
+    pack=b"".join(element for element in segmented_packets )
+    segmented_packets=[]
+    return pack
+
+
+
 def log(typ: str, text: str):
     '''
     [!] Information\n
@@ -48,7 +80,7 @@ def get_key(key: str) -> rsa.PublicKey:
 
 
 # configuration
-BUFFER_SIZE = 5210
+BUFFER_SIZE = 1024
 IP = '0.0.0.0'
 PORT = 27526
 
@@ -292,11 +324,9 @@ if __name__ == '__main__':
         client_socket , client_address = server_socket.accept()
         log('+', f'Connected to {client_address}')
         # client_socket.send(f'Hello {client_address} You are connected'.encode())
+        pack=get_packet(client_socket)
 
-        pack = client_socket.recv(BUFFER_SIZE)
-        first_packet += pack
-        # print(first_packet)
-        if first_packet:
+        if pack:
             try:
                 msg_classifier(pack,client_socket, client_address)
             except Exception as e:
