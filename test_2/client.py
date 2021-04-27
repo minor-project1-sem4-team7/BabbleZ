@@ -207,6 +207,8 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
             try:
                 self.client.send(packet)
+
+                self.store_my_message('sent', receiver_id, message)
             except:
                 log('-', 'Exception Packet Transfer')
                 return -1
