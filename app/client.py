@@ -16,6 +16,47 @@ logging.basicConfig(filename='app_log.txt', level=logging.DEBUG,
                     format=f'%(levelname)s %(asctime)s %(name)s %(threadName)s : %(message)s')
 
 
+def transmit_packet(client: socket.socket, packet):
+    # print(packet)
+    send_list = list()
+    base64string = str(base64.b64encode(packet))[2:-1]
+
+    offset = 0
+    chunk_size = 800
+    end_loop = False
+
+    while not end_loop:
+
+        chunk = base64string[offset: offset + chunk_size]
+
+        if len(chunk) % chunk_size != 0:
+            end_loop = True
+        
+        offset+=len(chunk)
+
+        send_list.append(chunk)
+
+    
+    no_packets = len(send_list)
+
+    counter_length=str(no_packets).encode()
+    client.send(counter_length)
+
+
+    for element in send_list:
+        indv_packet= base64.b64decode(element)
+        size=len(indv_packet)
+        length=str(size).encode()
+        length+=(b' '*(HEADER - len(length)))
+        # print('packet')
+        # print(len(length))
+        # print(length)
+        # print(indv_packet)
+        client.send(length)
+        client.send(indv_packet)
+        # print(f'it is the individual packet {indv_packet}')
+
+
 def log(typ: str, text: str):
     """
     [!] Information\n
@@ -265,7 +306,9 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
             pkt_typ = Security.personal_encrypt(pkt_typ)
 
             packet = pickle.dumps([metadata, pkt_typ])
-            self.client.send(packet)
+            transmit_packet(self.client,packet)
+
+            # self.client.send(packet)
         except Exception as e:
             print(e)
 
@@ -278,7 +321,8 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
         drop = [passwd, userid, pubkey, pkt_typ]
         packet = pickle.dumps(drop)
-        self.client.send(packet)
+        transmit_packet(self.client,packet)
+        # self.client.send(packet)
 
     # Search for a user on server
     def search_user(self, recv_id) :
