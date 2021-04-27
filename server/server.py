@@ -208,7 +208,13 @@ class Handler:
 
     def initiate_user(self):
         while True:
-            self.receive_msg_handler()
+            try:
+                self.receive_msg_handler()
+            except Exception as e:
+                self.send_msg(self.user_socket, rcd_packet(-100))
+                log('-', f'Exception {e}')
+                del self
+
         # recv_thread = threading.Thread(target= self.receive_msg_handler)
         # recv_thread.start()
 

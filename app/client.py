@@ -175,12 +175,14 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         if self.if_friend_exist(recv_id):
             return self.get_publicKey(recv_id)
         else:
-            # returns the public key
-            return self.search_user(recv_id)
-            # if rcv_public_key:
-            #     return rcv_public_key
-            # else:
-            #     raise Exception()
+
+            ky = ''
+            try:
+                ky = self.search_user(recv_id)
+            except:
+                log('-', 'Error Found Try to Login again')
+                del self
+            return ky
 
     # send message method
     def send_msg(self, message, receiver_id):
@@ -234,6 +236,9 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
             self.insert('Friend',js_obj)
             self.friends[uid] = True
+        else:
+            log('-', 'Server Error Reported, Logging Out...')
+            del self
 
     def received_message(self):
         try:
