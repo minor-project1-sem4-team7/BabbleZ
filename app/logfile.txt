@@ -1,0 +1,10 @@
+[!] 2021-04-27 11:51:01.879042 Server IP 192.168.56.20
+[!] 2021-04-27 11:51:01.879197 Server PORT 27526
+[+] 2021-04-27 11:51:01.879706 Connection made successfully to server
+[+] 2021-04-27 11:51:04.819606 Signup Successful as vmTesting_1
+[!] 2021-04-27 11:51:04.822017 Server IP 192.168.56.20
+[!] 2021-04-27 11:51:04.822098 Server PORT 27526
+[+] 2021-04-27 11:51:04.824653 Logged In Successfully as vmTesting_1
+[+] 2021-04-27 11:51:04.827160 Connection made successfully to server
+[-] 2021-04-27 11:52:47.574710 Error Found Try to Login again
+[-] 2021-04-27 11:52:47.574942 Exception Raised while Sending message

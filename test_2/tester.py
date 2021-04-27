@@ -4,7 +4,7 @@ import client
 import Security
 
 if __name__ == '__main__':
-    user_object = client.Babble('test_2', 'test_2')
+    user_object = client.Babble('vmTesting', 'vmTesting')
 
 
     def receive():

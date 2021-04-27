@@ -43,7 +43,7 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         # Socket Connection Started
         self.client = socket.socket()
         self.port = 27526
-        self.ip = '192.168.56.20' #'127.0.0.1' #'54.88.104.208'
+        self.ip = '192.168.56.20'     #'127.0.0.1' #'54.88.104.208'
         self.is_connected = False
 
         log('!', f'Server IP {self.ip}')
@@ -175,12 +175,14 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
         if self.if_friend_exist(recv_id):
             return self.get_publicKey(recv_id)
         else:
-            # returns the public key
-            return self.search_user(recv_id)
-            # if rcv_public_key:
-            #     return rcv_public_key
-            # else:
-            #     raise Exception()
+
+            ky = ''
+            try:
+                ky = self.search_user(recv_id)
+            except:
+                log('-', 'Error Found Try to Login again')
+                del self
+            return ky
 
     # send message method
     def send_msg(self, message, receiver_id):
@@ -202,13 +204,11 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
                 drop.append(Security.personal_encrypt('msg'))
                 packet = pickle.dumps(drop)
             except Exception as e:
-                log('-', f'Exception Raised while Sending message, {e}')
+                log('-', 'Exception Raised while Sending message')
                 return -1
 
             try:
                 self.client.send(packet)
-
-                self.store_my_message('sent', receiver_id, message)
             except:
                 log('-', 'Exception Packet Transfer')
                 return -1
@@ -236,6 +236,9 @@ class Babble (mongo_dao.MongoDAO, user.User, Security.Security):
 
             self.insert('Friend',js_obj)
             self.friends[uid] = True
+        else:
+            log('-', 'Server Error Reported, Logging Out...')
+            del self
 
     def received_message(self):
         try:

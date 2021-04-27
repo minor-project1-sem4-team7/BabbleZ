@@ -125,24 +125,6 @@ class MongoDAO:
 
     # Messaging
     # Saving to Database
-
-    def store_my_message(self, msg_type: str, coll: str, payload: str):
-
-        collection = coll
-
-        # date_time = str(ObjectId(metadata[2]).generation_time)[:-6]
-        date_time = str(datetime.now())[:-7]
-
-        js_obj = {"type": msg_type,
-                  "date": str(date_time),
-                  "payload": payload
-                  }
-
-        obj_id = self.insert(collection, js_obj)
-        if obj_id:
-            log('+', f'Document Created {self.database}.{collection}.{obj_id}')
-            return obj_id
-
     def imprint_message(self, msg_type: str, metadata: list, payload: str):
 
         collection = metadata[0]

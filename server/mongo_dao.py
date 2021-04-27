@@ -84,7 +84,7 @@ class MongoDAO:
 
     # Check for User In Local DB
     def if_user_exist(self, user_id):
-        if self.search_one('Profile', {"user_id": user_id}):
+        if self.search_one('Profiles', {"user_id": user_id}):
             return True
         else:
             return False

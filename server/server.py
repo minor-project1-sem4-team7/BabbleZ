@@ -258,12 +258,16 @@ def msg_classifier(packet, sock : socket.socket = None, adrs = None):
                 "public_key": metadata[2],
                 "username": metadata[3]
             }
-            _srv_db.insert('Profiles', js_obj)
 
-            res = Security.encrypt_data('Success', get_key(js_obj['public_key']))
-            drop = [res, Security.encrypt_data('signup', get_key(js_obj['public_key']))]
-            packet = pickle.dumps(drop)
-            sock.send(packet)
+            if not _srv_db.if_user_exist(metadata[0]):
+                _srv_db.insert('Profiles', js_obj)
+
+                res = Security.encrypt_data('Success', get_key(js_obj['public_key']))
+                drop = [res, Security.encrypt_data('signup', get_key(js_obj['public_key']))]
+                packet = pickle.dumps(drop)
+                sock.send(packet)
+            else:
+                sock.send(rcd_packet(-98))
         except:
             sock.send(rcd_packet(-98))
 
