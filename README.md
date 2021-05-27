@@ -1,2 +1,3 @@
 # BabbleZ
-Minor Project 1
+
+This is a Simple Chat App, mainly focused on user privacy.
